@@ -18,7 +18,7 @@ public class EssentiaContainerCap {
 	@CapabilityInject(IEssentiaContainer.class)
 	public static Capability<IEssentiaContainer> ESSENTIA_CONTAINER = null;
 	
-	public static final IEssentiaContainer EMPTY = new EssentiaContainer(null);
+	public static final IEssentiaContainer EMPTY = new EssentiaContainer();
 	public static final ResourceLocation LOCATION = new ResourceLocation(ExPrimo.MODID, "essentia_container");
 	
 	public static void register() {
@@ -27,16 +27,16 @@ public class EssentiaContainerCap {
 			@Override
 			public INBT writeNBT(Capability<IEssentiaContainer> capability, IEssentiaContainer instance,
 					Direction side) {
-				return new CompoundNBT();
+				return ((EssentiaContainer)instance).serializeNBT();
 			}
 
 			@Override
 			public void readNBT(Capability<IEssentiaContainer> capability, IEssentiaContainer instance, Direction side,
 					INBT nbt) {
-				
+				((EssentiaContainer)instance).deserializeNBT((CompoundNBT) nbt);
 			}
 			
-		}, () -> new EssentiaContainer(null));
+		}, () -> new EssentiaContainer());
 	}
 	
 	public static boolean canAttachTo(ICapabilityProvider o) {

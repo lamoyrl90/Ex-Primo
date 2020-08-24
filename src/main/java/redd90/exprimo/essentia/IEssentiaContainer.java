@@ -6,6 +6,8 @@ public interface IEssentiaContainer {
 
 	EssentiaStack getStack(Essentia essentia);
 	
+	EssentiaStack getStack(String name);
+	
 	HashMap<String, EssentiaStack> getStackSet();
 		
 }

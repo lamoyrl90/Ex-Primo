@@ -3,13 +3,11 @@ package redd90.exprimo.essentia;
 import java.util.Optional;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.registries.IRegistryDelegate;
 import redd90.exprimo.ExPrimo;
-import redd90.exprimo.network.EssentiaStackPacket;
 import redd90.exprimo.registry.ModRegistries;
 
 public class EssentiaStack {
@@ -72,10 +70,6 @@ public class EssentiaStack {
 		return essentia.delegate;
 	}
 
-	public void setWithoutUpdate(int amount) {
-		this.amount = amount;
-	}
-	
 	public void setAmount(int amount) {
 		this.amount = amount;
 		update();
@@ -115,11 +109,7 @@ public class EssentiaStack {
 			if (holder instanceof Chunk) {
 				Chunk chunk = (Chunk) holder;
 				World world = chunk.getWorld();
-				BlockPos pos = chunk.getPos().asBlockPos();
 				if(!world.isRemote()) {
-					EssentiaStackPacket packet = new EssentiaStackPacket(this.getEssentia().getName(), this.amount);
-					
-					ExPrimo.packetHandler.sendToAllLoaded(packet, world, pos);
 					chunk.markDirty();
 				}
 			}

@@ -1,27 +1,25 @@
 package redd90.exprimo.essentia;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.PerlinNoiseGenerator;
+import net.minecraft.world.gen.OctavesNoiseGenerator;
 import net.minecraft.world.server.ServerWorld;
 
 public class ChunkEssentiaBuilder {
 
 	private static final int MAX_VALUE = 10000;
-	private static HashMap<RegistryKey<World>, List<PerlinNoiseGenerator>> generators = new HashMap<>();
+	private static HashMap<RegistryKey<World>, HashMap<String, OctavesNoiseGenerator>> generators = new HashMap<>();
 	
 	private EssentiaContainer container;
 	private ServerWorld world;
 	private final long seed;
 	private final SharedSeedRandom seedRandom;
-	private final List<PerlinNoiseGenerator> noises;
+	private final HashMap<String, OctavesNoiseGenerator> noises;
 	private final int x;
 	private final int z;
 	private Chunk chunk;
@@ -39,16 +37,16 @@ public class ChunkEssentiaBuilder {
 		this.noises = getOrCreateGenerators(worldkey);
 	}
 	
-	private List<PerlinNoiseGenerator> getOrCreateGenerators(RegistryKey<World> worldkey) {
+	private HashMap<String, OctavesNoiseGenerator> getOrCreateGenerators(RegistryKey<World> worldkey) {
 		if(generators.containsKey(worldkey))
 			return generators.get(worldkey);
 		
-		List<PerlinNoiseGenerator> list = new ArrayList<>();
-		for (int i=0;i<container.getStackSet().size();i++) {
-			list.add(new PerlinNoiseGenerator(this.seedRandom, IntStream.rangeClosed(-1,0)));
+		HashMap<String, OctavesNoiseGenerator> map = new HashMap<>();
+		for (EssentiaStack stack : container.getStackSet().values()) {
+			map.put(stack.getEssentia().getName(), new OctavesNoiseGenerator(this.seedRandom, IntStream.rangeClosed(-15,0)));
 		}
-		generators.put(worldkey, list);
-		return list;
+		generators.put(worldkey, map);
+		return map;
 	}
 	
 	public EssentiaContainer createContainer() {
@@ -57,14 +55,29 @@ public class ChunkEssentiaBuilder {
 	}
 
 	private ChunkEssentiaBuilder applyNoise() {
-		int i=0;
 		for(EssentiaStack stack : container.getStackSet().values()) {
-			int point = (int) Math.floor(noises.get(i).noiseAt(x >> 4, world.getSeaLevel() >> 4, z >> 4, 0.0) * MAX_VALUE);
+			int point = (int) Math.floor(noises.get(stack.getEssentia().getName()).noiseAt(x<<8, z<<8, world.getSeaLevel(), 1.0) * MAX_VALUE);
 			if (point > 0)
-				stack.setWithoutUpdate(point);
-			i++;
+				stack.setAmount(point);
 		}
 		return this;
 	}
+	/*
+	private int getNoiseAverage(String name, double x, double z) {
+		double sum = 0;
+		int count = 0;
+		int radius = 0;
+		for(int i=-radius;i<=radius;i++) {
+			int rad2 = Math.abs(radius - i);
+			for(int j=-rad2;j<=rad2;j++) {
+				double x2 = x + i;
+				double z2 = z + j;
+				sum += Math.floor(noises.get(name).noiseAt(x2, z2, world.getSeaLevel(), 1.0) * MAX_VALUE);
+				count++;
+			}
+		}
+		
+		return (int) Math.floor(sum/count);
+	}*/
 	
 }

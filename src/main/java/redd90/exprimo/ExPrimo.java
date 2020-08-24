@@ -9,7 +9,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import redd90.exprimo.event.ClientEventHandler;
 import redd90.exprimo.event.ModEventHandler;
-import redd90.exprimo.network.ModPacketHandler;
 import redd90.exprimo.registry.Essentias;
 import redd90.exprimo.registry.ModRegistries;
 
@@ -21,7 +20,6 @@ public class ExPrimo
 {
 	public static final String MODID = "exprimo";
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final ModPacketHandler packetHandler = new ModPacketHandler();
      
     public ExPrimo() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -36,10 +34,9 @@ public class ExPrimo
     public void commonSetup(final FMLCommonSetupEvent event) {
     	MinecraftForge.EVENT_BUS.addGenericListener(Chunk.class, ModEventHandler::onAttachChunkCaps);
     	MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModEventHandler::onAttachEntityCaps);
-    	MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onWorldTick);
     	//MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ModEventHandler::onAttachItemCaps);
     	
-    	packetHandler.init();
+    	//packetHandler.init();
     }
     
     public void clientSetup(final FMLCommonSetupEvent event) {

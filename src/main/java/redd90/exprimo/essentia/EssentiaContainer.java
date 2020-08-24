@@ -19,14 +19,18 @@ import redd90.exprimo.registry.ModRegistries;
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
-	private final ICapabilityProvider holder;
+	private final Optional<ICapabilityProvider> holder;
 	
 	public EssentiaContainer(ICapabilityProvider holder) {
-		this.holder = holder;
+		this.holder = Optional.of(holder);
+	}
+	
+	public EssentiaContainer() {
+		this.holder = Optional.empty();
 	}
 	
 	public EssentiaContainer(ICapabilityProvider holder, HashMap<String, EssentiaStack> stackset) {
-		this.holder = holder;
+		this.holder = Optional.of(holder);
 		this.setStackSet(stackset);
 	}
 	
@@ -107,7 +111,11 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	}
 
 	public ICapabilityProvider getHolder() {
-		return holder;
+		if (holder.isPresent()) {
+			return holder.get();
+		} else {
+			throw new IllegalArgumentException("Essentia Container has no holder!");
+		}
 	}
 	
 	public void setStackSet(HashMap<String, EssentiaStack> stackset) {
@@ -118,7 +126,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	
 	public EssentiaContainer copy() {
 		HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
-		EssentiaContainer copy = new EssentiaContainer(this.holder, stackset);
+		EssentiaContainer copy = new EssentiaContainer(this.getHolder(), stackset);
 		copy.setStackSet(this.stackset);
 		return copy;
 	}
