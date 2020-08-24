@@ -9,5 +9,7 @@ public interface IEssentiaContainer {
 	EssentiaStack getStack(String name);
 	
 	HashMap<String, EssentiaStack> getStackSet();
+	
+	int getInnerPressure(String essentiakey);
 		
 }

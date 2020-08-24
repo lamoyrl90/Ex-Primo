@@ -18,6 +18,8 @@ import redd90.exprimo.registry.ModRegistries;
 
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
+	private static final int PRESSURE_THRESHOLD = 10000;
+	
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
 	private final Optional<ICapabilityProvider> holder;
 	
@@ -131,4 +133,26 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		return copy;
 	}
 
+	public int getInnerPressure(String essentiakey) {
+		int value = getStack(essentiakey).getAmount();
+		int pressure = 0;
+		if (value == 0)
+			return 0;
+		for (EssentiaStack stack : getStackSet().values()) {
+			if(stack.getEssentia().getName() != essentiakey) {
+				pressure += stack.getAmount();
+			} else {
+				pressure += Math.max(0, stack.getAmount() - PRESSURE_THRESHOLD);
+			}
+		}
+		int divisor = value + pressure == 0 ? 1 : value + pressure;
+		return Math.floorDiv(value * pressure, divisor);
+	}
+	
+	public void transfer(String essentiakey, EssentiaContainer target, int amount) {
+		if(getStackSet().containsKey(essentiakey) && target.getStackSet().containsKey(essentiakey)) {
+			getStack(essentiakey).shrink(amount);
+			target.getStack(essentiakey).grow(amount);
+		}
+	}
 }

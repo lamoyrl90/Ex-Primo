@@ -34,6 +34,7 @@ public class ExPrimo
     public void commonSetup(final FMLCommonSetupEvent event) {
     	MinecraftForge.EVENT_BUS.addGenericListener(Chunk.class, ModEventHandler::onAttachChunkCaps);
     	MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModEventHandler::onAttachEntityCaps);
+    	MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onServerTick);
     	//MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ModEventHandler::onAttachItemCaps);
     	
     	//packetHandler.init();
