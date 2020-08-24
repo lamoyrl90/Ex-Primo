@@ -2,26 +2,34 @@ package redd90.exprimo.essentia;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import redd90.exprimo.ExPrimo;
+import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
+import redd90.exprimo.essentia.flow.IFlowTickPredicate;
 import redd90.exprimo.registry.ModRegistries;
 
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
 	private static final int PRESSURE_THRESHOLD = 10000;
 	
+	private Set<EssentiaContainer> linkedContainers = new HashSet<>();
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
 	private final Optional<ICapabilityProvider> holder;
+	private IFlowTickPredicate tickPredicate = (world) -> {return false;};
 	
 	public EssentiaContainer(ICapabilityProvider holder) {
 		this.holder = Optional.of(holder);
@@ -158,4 +166,32 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			target.getStack(essentiakey).grow(amount);
 		}
 	}
+	
+	public void link(EssentiaContainer target) {
+		this.linkedContainers.add(target);
+	}
+	
+	public static void linkTwoWays(EssentiaContainer container1, EssentiaContainer container2) {
+		container1.link(container2);
+		container2.link(container1);
+	}
+	
+	public Set<EssentiaContainer> getLinked() {
+		return linkedContainers;
+	}
+	
+	public boolean shouldTick(IWorld world) {
+		return tickPredicate.test(world);
+	}
+	
+	public void scheduleChunkFlowTicks(IFlowTickPredicate predicate) {
+		Chunk holder = null;
+		if (getHolder() instanceof Chunk)
+			holder = (Chunk) getHolder();
+		if (holder != null) {
+			this.tickPredicate = predicate;
+			ChunkEssentiaFlowManager.scheduleChunk(holder);
+		}
+	}
+	
 }

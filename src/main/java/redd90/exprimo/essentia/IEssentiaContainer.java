@@ -11,5 +11,4 @@ public interface IEssentiaContainer {
 	HashMap<String, EssentiaStack> getStackSet();
 	
 	int getInnerPressure(String essentiakey);
-		
 }

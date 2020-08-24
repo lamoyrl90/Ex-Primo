@@ -57,6 +57,10 @@ public class ChunkEssentiaFlow {
 			}
 		}
 		
+		for(EssentiaContainer linked : container.getLinked()) {
+			targetcontainers.add(linked);
+		}
+		
 		return targetcontainers;
 	}
 	

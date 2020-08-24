@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+
+import net.minecraft.world.IWorld;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ChunkHolder;
 import net.minecraft.world.server.ChunkManager;
@@ -13,11 +15,14 @@ import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import redd90.exprimo.ExPrimo;
+import redd90.exprimo.essentia.EssentiaContainer;
+import redd90.exprimo.essentia.EssentiaContainerCap;
 
 public class ChunkEssentiaFlowManager {
 
 	private static final Method LOADED_CHUNKS = ObfuscationReflectionHelper.findMethod(ChunkManager.class, "func_223491_f");
 	private static Queue<Chunk> loadedchunks = new LinkedList<>();
+	private static Set<Chunk> scheduled = new HashSet<>();
 	private static final int MAX_ENQUEUED = 1000;
 	private static final int CHUNKS_PER_TICK = 50;
 	
@@ -29,12 +34,24 @@ public class ChunkEssentiaFlowManager {
 			if (nextFromQueue != null)
 				chunkstoflow.add(nextFromQueue);
 		}
+		for(Chunk chunk : scheduled) {
+			EssentiaContainer container = (EssentiaContainer) chunk.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(null);
+			if (container != null) {
+				if (container.shouldTick(world)) {
+					chunkstoflow.add(chunk);
+				}
+			}
+		}
 		for (Chunk chunk : chunkstoflow) {
 			ChunkEssentiaFlow chunkessentiaflow = new ChunkEssentiaFlow(chunk);
 			chunkessentiaflow.flow();
 		}
 	}
-		
+	
+	public static void scheduleChunk(Chunk chunk) {
+		scheduled.add(chunk);
+	}
+	
 	@SuppressWarnings("unchecked") //Type-safe through invocation
 	private static void updateLoadedChunksList(ServerWorld world) {
 		try {
@@ -55,5 +72,21 @@ public class ChunkEssentiaFlowManager {
 	
 	public static int getNumberChunksInQueue() {
 		return loadedchunks.size();
+	}
+	
+	public class PeriodicFlowTick implements IFlowTickPredicate {
+		private final int interval;
+		
+		public PeriodicFlowTick(int interval) {
+			this.interval = interval;
+		}
+
+		@Override
+		public boolean test(IWorld world) {
+			if (world instanceof ServerWorld) {
+				return (((ServerWorld) world).getGameTime() % interval == 0);
+			}
+			return false;
+		}
 	}
 }
