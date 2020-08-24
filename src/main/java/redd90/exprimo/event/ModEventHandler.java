@@ -1,16 +1,13 @@
 package redd90.exprimo.event;
 
-import java.lang.reflect.Method;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import redd90.exprimo.ExPrimo;
 import redd90.exprimo.command.SetChunkEssentiaCommand;
 import redd90.exprimo.essentia.ChunkEssentiaBuilder;
@@ -19,8 +16,6 @@ import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
 
 public class ModEventHandler {
-	
-	private static final Method LOADED_CHUNKS = ObfuscationReflectionHelper.findMethod(ChunkManager.class, "func_223491_f");
 	
 	public static void onAttachChunkCaps(AttachCapabilitiesEvent<Chunk> event) {
 		Chunk chunk = event.getObject() instanceof Chunk ? event.getObject() : null;
