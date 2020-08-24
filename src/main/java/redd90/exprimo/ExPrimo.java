@@ -48,7 +48,7 @@ public class ExPrimo
     }
     
     public void serverStarting(final FMLServerStartingEvent event) {
-    	MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onServerTick);
+    	MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onServerWorldTick);
     }
 
 }

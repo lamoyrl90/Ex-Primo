@@ -44,13 +44,13 @@ public class ModEventHandler {
 		}
 	}*/
 	
-	public static void onServerTick(TickEvent.WorldTickEvent event) {
+	public static void onServerWorldTick(TickEvent.WorldTickEvent event) {
 		if (event.world.isRemote())
 			return;
 		ServerWorld world = (ServerWorld) event.world;
 		
         world.getProfiler().startSection(ExPrimo.MODID + ":onWorldTick");
-        ChunkEssentiaFlowManager.manageChunkFlows(world);
+        ChunkEssentiaFlowManager.onServerWorldTick(world);
         event.world.getProfiler().endSection();
 	}
     

@@ -13,6 +13,7 @@ import redd90.exprimo.ExPrimo;
 import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.essentia.EssentiaStack;
 import redd90.exprimo.essentia.IEssentiaContainer;
+import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
 
 public class ClientEventHandler {
 
@@ -33,6 +34,7 @@ public class ClientEventHandler {
 		for (EssentiaStack stack : container.getStackSet().values()) {
 			left.add(stack.getEssentia().getName() + ": " + stack.getAmount());
 		}
+		left.add("enqueued: " + ChunkEssentiaFlowManager.getNumberChunksInQueue());
 		
 	}
 	
