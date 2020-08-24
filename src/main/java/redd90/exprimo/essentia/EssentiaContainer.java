@@ -142,6 +142,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			if(stack.getEssentia().getName() != essentiakey) {
 				pressure += stack.getAmount();
 			} else {
+				pressure -= (int) Math.floor(Math.sqrt(stack.getAmount()));
 				pressure += Math.max(0, stack.getAmount() - PRESSURE_THRESHOLD);
 			}
 		}
@@ -151,6 +152,8 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	
 	public void transfer(String essentiakey, EssentiaContainer target, int amount) {
 		if(getStackSet().containsKey(essentiakey) && target.getStackSet().containsKey(essentiakey)) {
+			int stackamt = getStack(essentiakey).getAmount();
+			amount = Math.max(0, Math.min(stackamt, amount));
 			getStack(essentiakey).shrink(amount);
 			target.getStack(essentiakey).grow(amount);
 		}

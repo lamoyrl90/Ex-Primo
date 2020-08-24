@@ -5,7 +5,9 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import redd90.exprimo.event.ClientEventHandler;
 import redd90.exprimo.event.ModEventHandler;
@@ -28,20 +30,25 @@ public class ExPrimo
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
         
+        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+        MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onRegisterCommands);
+        
         Essentias.ESSENTIAS.register(modEventBus);
     }
     
     public void commonSetup(final FMLCommonSetupEvent event) {
     	MinecraftForge.EVENT_BUS.addGenericListener(Chunk.class, ModEventHandler::onAttachChunkCaps);
     	MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModEventHandler::onAttachEntityCaps);
-    	MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onServerTick);
     	//MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ModEventHandler::onAttachItemCaps);
     	
-    	//packetHandler.init();
     }
     
-    public void clientSetup(final FMLCommonSetupEvent event) {
+    public void clientSetup(final FMLClientSetupEvent event) {
     	MinecraftForge.EVENT_BUS.addListener(ClientEventHandler::onDebugRender);
+    }
+    
+    public void serverStarting(final FMLServerStartingEvent event) {
+    	MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onServerTick);
     }
 
 }

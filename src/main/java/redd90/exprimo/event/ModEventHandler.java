@@ -2,6 +2,11 @@ package redd90.exprimo.event;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,13 +17,16 @@ import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import redd90.exprimo.ExPrimo;
+import redd90.exprimo.command.SetChunkEssentiaCommand;
 import redd90.exprimo.essentia.ChunkEssentiaBuilder;
 import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.essentia.flow.ChunkEssentiaFlow;
+import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
 
 public class ModEventHandler {
 	
@@ -51,30 +59,17 @@ public class ModEventHandler {
 		}
 	}*/
 	
-	@SuppressWarnings("unchecked")
 	public static void onServerTick(TickEvent.WorldTickEvent event) {
 		if (event.world.isRemote())
 			return;
 		ServerWorld world = (ServerWorld) event.world;
 		
-		if (world.getGameTime() % 20 == 0) {
-            world.getProfiler().startSection(ExPrimo.MODID + ":onWorldTick");
-            try {
-            	ServerChunkProvider chunkprovider = world.getChunkProvider();
-                ChunkManager manager = chunkprovider.chunkManager;
-                Iterable<ChunkHolder> chunks = (Iterable<ChunkHolder>) LOADED_CHUNKS.invoke(manager);
-                for (ChunkHolder holder : chunks) {
-                    Chunk chunk = holder.getChunkIfComplete();
-                    if (chunk == null)
-                        continue;
-                    ChunkEssentiaFlow chunkessentiaflow = new ChunkEssentiaFlow(chunk);
-                    chunkessentiaflow.flow();
-                }
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                ExPrimo.LOGGER.fatal(e);
-            }
-            event.world.getProfiler().endSection();
-		}
+        world.getProfiler().startSection(ExPrimo.MODID + ":onWorldTick");
+        ChunkEssentiaFlowManager.manageChunkFlows(world);
+        event.world.getProfiler().endSection();
 	}
     
+	public static void onRegisterCommands(final RegisterCommandsEvent event) {
+		SetChunkEssentiaCommand.register(event.getDispatcher());
+	}
 }

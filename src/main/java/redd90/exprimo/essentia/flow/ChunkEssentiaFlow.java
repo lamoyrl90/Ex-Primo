@@ -45,7 +45,7 @@ public class ChunkEssentiaFlow {
 			BlockPos pos = chunk.getPos().asBlockPos();
 			BlockPos pos1 = pos.offset(dir, 16);
 			IChunk ichunk = world.getChunk(pos1);
-			if (!(ichunk instanceof Chunk) || !world.chunkExists(pos1.getX(), pos1.getY()))
+			if (!(ichunk instanceof Chunk) || !world.isAreaLoaded(pos1, 0))
 				continue;
 			Chunk chunk1 = (Chunk) ichunk;
 			try {
