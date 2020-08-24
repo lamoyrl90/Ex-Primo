@@ -1,20 +1,11 @@
 package redd90.exprimo.event;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ChunkHolder;
 import net.minecraft.world.server.ChunkManager;
-import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -25,7 +16,6 @@ import redd90.exprimo.command.SetChunkEssentiaCommand;
 import redd90.exprimo.essentia.ChunkEssentiaBuilder;
 import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
-import redd90.exprimo.essentia.flow.ChunkEssentiaFlow;
 import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
 
 public class ModEventHandler {
