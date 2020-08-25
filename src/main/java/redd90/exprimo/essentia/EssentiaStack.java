@@ -24,7 +24,7 @@ public class EssentiaStack {
 	
 	public EssentiaStack(Optional<EssentiaContainer> container, String name, int amount) {
 		this.container = container;
-		Essentia essentia = ModRegistries.ESSENTIAE.getValue(new ResourceLocation(ExPrimo.MODID, name));
+		Essentia essentia = ModRegistries.ESSENTIAS.getValue(new ResourceLocation(ExPrimo.MODID, name));
 		this.delegate = essentia.delegate;
 		this.amount = amount;
 	}
@@ -62,7 +62,7 @@ public class EssentiaStack {
 	}
 		
 	public IRegistryDelegate<Essentia> getDelegate(Essentia essentia) {
-		if (ModRegistries.ESSENTIAE.getKey(essentia) == null) {
+		if (ModRegistries.ESSENTIAS.getKey(essentia) == null) {
 			ExPrimo.LOGGER.fatal("Failed to create an EssentiaStack for an unregistered Essentia {}", essentia.getRegistryName());
 			throw new IllegalArgumentException("Cannot create an EssentiaStack for an unregistered Essentia");
 		}

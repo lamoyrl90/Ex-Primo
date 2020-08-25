@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -20,19 +22,24 @@ import net.minecraftforge.common.util.LazyOptional;
 import redd90.exprimo.ExPrimo;
 import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
 import redd90.exprimo.essentia.flow.IFlowTickPredicate;
+import redd90.exprimo.item.IEssentiaContainerItem;
 import redd90.exprimo.registry.ModRegistries;
 
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
-	private static final int PRESSURE_THRESHOLD = 10000;
-	
 	private Set<EssentiaContainer> linkedContainers = new HashSet<>();
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
 	private final Optional<ICapabilityProvider> holder;
-	private IFlowTickPredicate tickPredicate = (world) -> {return false;};
+	private IFlowTickPredicate tickPredicate = new DefaultFlowTickPredicate();
+	private int capacity = 10000;
 	
 	public EssentiaContainer(ICapabilityProvider holder) {
 		this.holder = Optional.of(holder);
+		if (holder instanceof ItemStack) {
+			Item item = ((ItemStack) holder).getItem();
+			if (item instanceof IEssentiaContainerItem)
+				this.capacity = ((IEssentiaContainerItem)item).getCapacity();
+		}
 	}
 	
 	public EssentiaContainer() {
@@ -47,14 +54,14 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	public HashMap<String, EssentiaStack> createEmptyStackSet() {
 		HashMap<String, EssentiaStack> stackset = new HashMap<>();
 		
-		if (ModRegistries.ESSENTIAE.getEntries().isEmpty()) {
+		if (ModRegistries.ESSENTIAS.getEntries().isEmpty()) {
 			String message = "Essentiae failed to register - cannot create new Essentia Container!";
 			ExPrimo.LOGGER.fatal(message);
 			return stackset;
 		}
 		
 		
-		for (Essentia e : ModRegistries.ESSENTIAE) {
+		for (Essentia e : ModRegistries.ESSENTIAS) {
 			stackset.put(e.getName(), new EssentiaStack(Optional.of(this), e, 0));
 		}
 		this.claimStacks(stackset.values());
@@ -151,11 +158,17 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 				pressure += stack.getAmount();
 			} else {
 				pressure -= (int) Math.floor(Math.sqrt(stack.getAmount()));
-				pressure += Math.max(0, stack.getAmount() - PRESSURE_THRESHOLD);
+				pressure += calculateOverfilled(stack.getAmount());
 			}
 		}
 		int divisor = value + pressure == 0 ? 1 : value + pressure;
 		return Math.floorDiv(value * pressure, divisor);
+	}
+	
+	
+	private int calculateOverfilled(int amount) {
+		int diff = Math.max(0, amount - capacity);
+		return diff * diff;
 	}
 	
 	public void transfer(String essentiakey, EssentiaContainer target, int amount) {
@@ -192,6 +205,25 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			this.tickPredicate = predicate;
 			ChunkEssentiaFlowManager.scheduleChunk(holder);
 		}
+	}
+	
+	public void unscheduleChunkFlowTicks() {
+		Chunk holder = null;
+		if (getHolder() instanceof Chunk)
+			holder = (Chunk) getHolder();
+		if (holder != null) {
+			this.tickPredicate = new DefaultFlowTickPredicate();
+			ChunkEssentiaFlowManager.unscheduleChunk(holder);
+		}
+	}
+	
+	public class DefaultFlowTickPredicate implements IFlowTickPredicate {
+
+		@Override
+		public boolean test(IWorld world) {
+			return false;
+		}
+		
 	}
 	
 }

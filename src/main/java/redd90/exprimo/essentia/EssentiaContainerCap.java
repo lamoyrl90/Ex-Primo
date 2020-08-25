@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import redd90.exprimo.ExPrimo;
+import redd90.exprimo.item.IEssentiaContainerItem;
 
 public class EssentiaContainerCap {
 
@@ -46,6 +47,6 @@ public class EssentiaContainerCap {
 	}
 	
 	private static boolean isValidItemStack(ItemStack stack) {
-		return false;
+		return stack.getItem() instanceof IEssentiaContainerItem;
 	}
 }

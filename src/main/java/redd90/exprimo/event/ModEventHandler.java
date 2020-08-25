@@ -2,6 +2,7 @@ package redd90.exprimo.event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -36,13 +37,13 @@ public class ModEventHandler {
 			event.addCapability(EssentiaContainerCap.LOCATION, new EssentiaContainer(player));
 		}
 	}
-	/*
+	
 	public static void onAttachItemCaps(AttachCapabilitiesEvent<ItemStack> event) {
 		ItemStack stack = event.getObject() instanceof ItemStack ? event.getObject() : null;
 		if(stack != null && EssentiaContainerCap.canAttachTo(stack)) {
 			event.addCapability(EssentiaContainerCap.LOCATION, new EssentiaContainer(stack));
 		}
-	}*/
+	}
 	
 	public static void onServerWorldTick(TickEvent.WorldTickEvent event) {
 		if (event.world.isRemote())

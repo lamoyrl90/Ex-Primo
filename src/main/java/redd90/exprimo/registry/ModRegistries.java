@@ -9,12 +9,12 @@ import redd90.exprimo.essentia.Essentia;
 
 public class ModRegistries {
 
-	public static IForgeRegistry<Essentia> ESSENTIAE;
+	public static IForgeRegistry<Essentia> ESSENTIAS;
 	
 	public static void createRegistries(final RegistryEvent.NewRegistry event) {
 		RegistryBuilder<Essentia> builder = new RegistryBuilder<>();
 		builder.setName(new ResourceLocation(ExPrimo.MODID, "essentiae"));
 		builder.setType(Essentia.class);
-		ModRegistries.ESSENTIAE = builder.create();
+		ModRegistries.ESSENTIAS = builder.create();
 	}
 }

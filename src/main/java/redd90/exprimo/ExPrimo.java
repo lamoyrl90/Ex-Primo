@@ -12,6 +12,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import redd90.exprimo.event.ClientEventHandler;
 import redd90.exprimo.event.ModEventHandler;
 import redd90.exprimo.registry.Essentias;
+import redd90.exprimo.registry.ModBlocks;
+import redd90.exprimo.registry.ModItems;
 import redd90.exprimo.registry.ModRegistries;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +36,8 @@ public class ExPrimo
         MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onRegisterCommands);
         
         Essentias.ESSENTIAS.register(modEventBus);
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
     }
     
     public void commonSetup(final FMLCommonSetupEvent event) {

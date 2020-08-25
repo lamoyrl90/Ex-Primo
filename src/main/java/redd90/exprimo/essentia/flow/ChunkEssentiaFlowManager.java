@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ChunkHolder;
@@ -21,7 +22,7 @@ import redd90.exprimo.essentia.EssentiaContainerCap;
 public class ChunkEssentiaFlowManager {
 
 	private static final Method LOADED_CHUNKS = ObfuscationReflectionHelper.findMethod(ChunkManager.class, "func_223491_f");
-	private static Queue<Chunk> loadedchunks = new LinkedList<>();
+	private static Queue<Chunk> loadedchunkqueue = new LinkedList<>();
 	private static Set<Chunk> scheduled = new HashSet<>();
 	private static final int MAX_ENQUEUED = 1000;
 	private static final int CHUNKS_PER_TICK = 50;
@@ -30,11 +31,15 @@ public class ChunkEssentiaFlowManager {
 		updateLoadedChunksList(world);
 		Set<Chunk> chunkstoflow = new HashSet<>();
 		for(int i=0;i<CHUNKS_PER_TICK;i++) {
-			Chunk nextFromQueue = loadedchunks.poll();
+			Chunk nextFromQueue = loadedchunkqueue.poll();
 			if (nextFromQueue != null)
 				chunkstoflow.add(nextFromQueue);
 		}
 		for(Chunk chunk : scheduled) {
+			ChunkPos chunkpos = chunk.getPos();
+			if(!world.chunkExists(chunkpos.x, chunkpos.z))
+				continue;
+			
 			EssentiaContainer container = (EssentiaContainer) chunk.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(null);
 			if (container != null) {
 				if (container.shouldTick(world)) {
@@ -52,6 +57,14 @@ public class ChunkEssentiaFlowManager {
 		scheduled.add(chunk);
 	}
 	
+	public static void unscheduleChunk(Chunk chunk) {
+		if (scheduled.contains(chunk))
+			scheduled.remove(chunk);
+		else {
+			ExPrimo.LOGGER.error("Cannot unschedule chunk {}: it is not on the scheduled chunk list", chunk);
+		}
+	}
+	
 	@SuppressWarnings("unchecked") //Type-safe through invocation
 	private static void updateLoadedChunksList(ServerWorld world) {
 		try {
@@ -62,8 +75,8 @@ public class ChunkEssentiaFlowManager {
 				Chunk chunk = holder.getChunkIfComplete();
 				if (chunk == null)
 					continue;
-				if (!loadedchunks.contains(chunk) && getNumberChunksInQueue() <= MAX_ENQUEUED)
-					loadedchunks.add(chunk);
+				if (!loadedchunkqueue.contains(chunk) && getNumberChunksInQueue() <= MAX_ENQUEUED)
+					loadedchunkqueue.add(chunk);
 			}
 		} catch (IllegalAccessException | InvocationTargetException e) {
             ExPrimo.LOGGER.fatal(e);
@@ -71,7 +84,7 @@ public class ChunkEssentiaFlowManager {
 	}
 	
 	public static int getNumberChunksInQueue() {
-		return loadedchunks.size();
+		return loadedchunkqueue.size();
 	}
 	
 	public class PeriodicFlowTick implements IFlowTickPredicate {
