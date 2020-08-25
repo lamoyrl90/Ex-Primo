@@ -48,7 +48,7 @@ public class ChunkEssentiaFlowManager {
 			}
 		}
 		for (Chunk chunk : chunkstoflow) {
-			ChunkEssentiaFlow chunkessentiaflow = new ChunkEssentiaFlow(chunk);
+			ChunkEssentiaFlowProvider chunkessentiaflow = new ChunkEssentiaFlowProvider(chunk);
 			chunkessentiaflow.flow();
 		}
 	}
