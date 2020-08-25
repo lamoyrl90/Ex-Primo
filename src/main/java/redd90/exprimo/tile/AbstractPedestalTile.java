@@ -1,8 +1,11 @@
 package redd90.exprimo.tile;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.server.ServerWorld;
+import redd90.exprimo.essentia.flow.TileEssentiaFlowManager;
+import redd90.exprimo.item.IEssentiaContainerItem;
 import redd90.exprimo.item.inventory.ModItemStackHandler;
 
 public abstract class AbstractPedestalTile extends TileWithInventory implements ITickableTileEntity {
@@ -28,11 +31,21 @@ public abstract class AbstractPedestalTile extends TileWithInventory implements 
 	@Override
 	public void tick() {
 		if (!this.world.isRemote()) {
+			if (!holdingEssentiaTickable())
+				return;
 			ServerWorld world = (ServerWorld) this.world;
 			int time = (int) (world.getGameTime() - timePlaced);
 			if (time % this.tickInterval == 0) {
-				
+				TileEssentiaFlowManager.onTileTick(this);
 			}
 		}
+	}
+	
+	public boolean holdingEssentiaTickable() {
+		for (ItemStack stack : itemhandler.getStacks()) {
+			if (stack.getItem() instanceof IEssentiaContainerItem)
+				return true;
+		}
+		return false;
 	}
 }

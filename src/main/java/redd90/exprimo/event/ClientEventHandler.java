@@ -32,7 +32,7 @@ public class ClientEventHandler {
 		left.add(prefix);
 		
 		for (EssentiaStack stack : container.getStackSet().values()) {
-			left.add(stack.getEssentia().getName() + ": " + stack.getAmount());
+			left.add(stack.getEssentia().getKey() + ": " + stack.getAmount());
 		}
 		left.add("enqueued: " + ChunkEssentiaFlowManager.getNumberChunksInQueue());
 		

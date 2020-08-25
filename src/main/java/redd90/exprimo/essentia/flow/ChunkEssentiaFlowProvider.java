@@ -3,6 +3,7 @@ package redd90.exprimo.essentia.flow;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +23,12 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 		this.targetcontainers = gatherTargetContainers();
 	}
 	
+	public ChunkEssentiaFlowProvider(TileEntity tile, Set<EssentiaContainer> targets) {
+		super((Chunk) tile.getWorld().getChunk(tile.getPos()));
+		this.sourcecontainers = gatherSourceContainers();
+		this.targetcontainers = targets;
+	}
+	
 	@Override
 	protected Set<EssentiaContainer> gatherSourceContainers() {
 		Set<EssentiaContainer> sourcecontainers = new HashSet<>();
@@ -32,7 +39,6 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 	protected Set<EssentiaContainer> gatherTargetContainers() {
 		Set<EssentiaContainer> targetcontainers = new HashSet<>();
 		Chunk chunk = (Chunk) holder;
-		EssentiaContainer container = (EssentiaContainer) sourcecontainers.toArray()[0];
 		
 		for(int i=0;i<4;i++) {
 			Direction dir = Direction.byHorizontalIndex(i);
@@ -52,10 +58,6 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 				ExPrimo.LOGGER.error(e);
 				continue;
 			}
-		}
-		
-		for(EssentiaContainer linked : container.getLinked()) {
-			targetcontainers.add(linked);
 		}
 		
 		return targetcontainers;

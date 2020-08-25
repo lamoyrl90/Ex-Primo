@@ -43,7 +43,7 @@ public class ChunkEssentiaBuilder {
 		
 		HashMap<String, OctavesNoiseGenerator> map = new HashMap<>();
 		for (EssentiaStack stack : container.getStackSet().values()) {
-			map.put(stack.getEssentia().getName(), new OctavesNoiseGenerator(this.seedRandom, IntStream.rangeClosed(-15,0)));
+			map.put(stack.getEssentia().getKey(), new OctavesNoiseGenerator(this.seedRandom, IntStream.rangeClosed(-15,0)));
 		}
 		generators.put(worldkey, map);
 		return map;
@@ -56,28 +56,10 @@ public class ChunkEssentiaBuilder {
 
 	private ChunkEssentiaBuilder applyNoise() {
 		for(EssentiaStack stack : container.getStackSet().values()) {
-			int point = (int) Math.floor(noises.get(stack.getEssentia().getName()).noiseAt(x<<8, z<<8, world.getSeaLevel(), 1.0) * MAX_VALUE);
+			int point = (int) Math.floor(noises.get(stack.getEssentia().getKey()).noiseAt(x<<8, z<<8, world.getSeaLevel(), 1.0) * MAX_VALUE);
 			if (point > 0)
 				stack.setAmount(point);
 		}
 		return this;
 	}
-	/*
-	private int getNoiseAverage(String name, double x, double z) {
-		double sum = 0;
-		int count = 0;
-		int radius = 0;
-		for(int i=-radius;i<=radius;i++) {
-			int rad2 = Math.abs(radius - i);
-			for(int j=-rad2;j<=rad2;j++) {
-				double x2 = x + i;
-				double z2 = z + j;
-				sum += Math.floor(noises.get(name).noiseAt(x2, z2, world.getSeaLevel(), 1.0) * MAX_VALUE);
-				count++;
-			}
-		}
-		
-		return (int) Math.floor(sum/count);
-	}*/
-	
 }

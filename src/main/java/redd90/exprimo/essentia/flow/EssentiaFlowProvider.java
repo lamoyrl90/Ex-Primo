@@ -35,7 +35,7 @@ public abstract class EssentiaFlowProvider {
 		
 		for(EssentiaContainer target : targetcontainers) {
 			for(EssentiaStack stack : target.getStackSet().values()) {
-				String essentiakey = stack.getEssentia().getName();
+				String essentiakey = stack.getEssentia().getKey();
 				for(EssentiaContainer source : sourcecontainers) {
 					if (!source.getStackSet().containsKey(essentiakey))
 						continue;

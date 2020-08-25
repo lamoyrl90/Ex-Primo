@@ -47,7 +47,7 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 			
 			if (essentia != null) {
 				for(EssentiaStack essentiastack : essentia.getStackSet().values()) {
-					list.add(new StringTextComponent(essentiastack.getEssentia().getName() + ": " + essentiastack.getAmount()));
+					list.add(new StringTextComponent(essentiastack.getEssentia().getTranslationKey() + ": " + essentiastack.getAmount()));
 				}
 			}
 		}
