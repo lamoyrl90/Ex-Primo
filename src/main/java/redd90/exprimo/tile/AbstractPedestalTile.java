@@ -1,27 +1,30 @@
 package redd90.exprimo.tile;
 
-import net.minecraft.inventory.Inventory;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.server.ServerWorld;
-import redd90.exprimo.item.SingleItemInventory;
+import redd90.exprimo.item.inventory.ModItemStackHandler;
 
-public abstract class AbstractPedestalTile extends ModTile implements ITickableTileEntity {
+public abstract class AbstractPedestalTile extends TileWithInventory implements ITickableTileEntity {
 
-	private SingleItemInventory itemhandler = new SingleItemInventory();
+	private ModItemStackHandler itemhandler = new ModItemStackHandler(1, this::markDirtyAndDispatch);
 	private int tickInterval = 40;
 	private final long timePlaced;
 	
 	public <E extends AbstractPedestalTile> AbstractPedestalTile(TileEntityType<E> type) {
 		super(type);
+		this.itemhandler.setDefaultSlotLimit(1);
 		if (this.getWorld() != null && !this.getWorld().isRemote()) {
 			this.timePlaced = this.getWorld().getGameTime();
 		} else {
 			this.timePlaced = 0;
 		}
-		itemhandler.addListener(i -> markDirty());
 	}
 
+	public ModItemStackHandler getInventory() {
+		return this.itemhandler;
+	}
+	
 	@Override
 	public void tick() {
 		if (!this.world.isRemote()) {
@@ -31,9 +34,5 @@ public abstract class AbstractPedestalTile extends ModTile implements ITickableT
 				
 			}
 		}
-	}
-	
-	public Inventory getItemHandler() {
-		return itemhandler;
 	}
 }
