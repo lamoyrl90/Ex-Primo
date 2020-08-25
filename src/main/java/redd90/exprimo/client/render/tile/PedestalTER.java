@@ -4,6 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -23,8 +25,10 @@ public class PedestalTER <E extends AbstractPedestalTile> extends TileEntityRend
 		ms.push();
 		
 		ms.translate(0.5, 0.875, 0.5);
+		ItemRenderer itemrenderer = Minecraft.getInstance().getItemRenderer();
 		ItemStack stack = te.getItemHandler().getStackInSlot(0);
-		Minecraft.getInstance().getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND, light, overlay, ms, buffer);
+		IBakedModel model = itemrenderer.getItemModelWithOverrides(stack, te.getWorld(), null);
+		itemrenderer.renderItem(stack, ItemCameraTransforms.TransformType.GROUND, true, ms, buffer, light, overlay, model);
 		
 		ms.pop();
 	}

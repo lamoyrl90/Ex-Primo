@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.server.ServerWorld;
 import redd90.exprimo.item.SingleItemInventory;
 
-public class AbstractPedestalTile extends ModTile implements ITickableTileEntity {
+public abstract class AbstractPedestalTile extends ModTile implements ITickableTileEntity {
 
 	private SingleItemInventory itemhandler = new SingleItemInventory();
 	private int tickInterval = 40;
@@ -14,7 +14,11 @@ public class AbstractPedestalTile extends ModTile implements ITickableTileEntity
 	
 	public <E extends AbstractPedestalTile> AbstractPedestalTile(TileEntityType<E> type) {
 		super(type);
-		this.timePlaced = world.getGameTime();
+		if (this.getWorld() != null && !this.getWorld().isRemote()) {
+			this.timePlaced = this.getWorld().getGameTime();
+		} else {
+			this.timePlaced = 0;
+		}
 		itemhandler.addListener(i -> markDirty());
 	}
 

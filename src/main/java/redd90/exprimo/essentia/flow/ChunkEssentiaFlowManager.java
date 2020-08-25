@@ -25,7 +25,7 @@ public class ChunkEssentiaFlowManager {
 	private static Queue<Chunk> loadedchunkqueue = new LinkedList<>();
 	private static Set<Chunk> scheduled = new HashSet<>();
 	private static final int MAX_ENQUEUED = 1000;
-	private static final int CHUNKS_PER_TICK = 50;
+	private static final int CHUNKS_PER_TICK = 25;
 	
 	public static void onServerWorldTick(ServerWorld world) {
 		updateLoadedChunksList(world);

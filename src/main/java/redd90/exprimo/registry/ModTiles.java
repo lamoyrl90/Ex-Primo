@@ -20,10 +20,10 @@ public class ModTiles {
 	private static Queue<Runnable> clientWorkQueue = new LinkedList<>();
 	public static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, ExPrimo.MODID);
 	
-	public static final RegistryObject<TileEntityType<StonePedestalTile>> STONE_PEDESTAL = registerType(ModBlocks.STONE_PEDESTAL.get(), new PedestalTER<StonePedestalTile>(), () -> new StonePedestalTile());
+	public static final RegistryObject<TileEntityType<StonePedestalTile>> STONE_PEDESTAL = registerType(ModBlocks.STONE_PEDESTAL, new PedestalTER<StonePedestalTile>(), () -> new StonePedestalTile());
 	
-	private static <E extends TileEntity> RegistryObject<TileEntityType<E>> registerType(Block block, IModTER<E> renderer, Supplier<E> factory) {
-		RegistryObject<TileEntityType<E>> regobj = TILES.register(block.getRegistryName().getPath(), () -> TileEntityType.Builder.create(factory, block).build(null));
+	private static <E extends TileEntity, B extends Block> RegistryObject<TileEntityType<E>> registerType(RegistryObject<B> blockentry, IModTER<E> renderer, Supplier<E> factory) {
+		RegistryObject<TileEntityType<E>> regobj = TILES.register(blockentry.getId().getPath(), () -> TileEntityType.Builder.create(factory, blockentry.get()).build(null));
 		clientWorkQueue.add(() -> registerTER(renderer, regobj.get()));
 		return regobj;
 	}

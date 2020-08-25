@@ -39,6 +39,7 @@ public class ExPrimo
         Essentias.ESSENTIAS.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModTiles.TILES.register(modEventBus);
     }
     
     public void commonSetup(final FMLCommonSetupEvent event) {
