@@ -18,9 +18,18 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 		
 	public ChunkEssentiaFlowProvider(Chunk chunk) {
 		super(chunk);
+		this.sourcecontainers = gatherSourceContainers();
+		this.targetcontainers = gatherTargetContainers();
 	}
 	
-	protected Set<EssentiaContainer> getTargetContainers() {
+	@Override
+	protected Set<EssentiaContainer> gatherSourceContainers() {
+		Set<EssentiaContainer> sourcecontainers = new HashSet<>();
+		sourcecontainers.add((EssentiaContainer) this.holder.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(EssentiaContainerCap.EMPTY));
+		return sourcecontainers;
+	}
+	
+	protected Set<EssentiaContainer> gatherTargetContainers() {
 		Set<EssentiaContainer> targetcontainers = new HashSet<>();
 		Chunk chunk = (Chunk) holder;
 		EssentiaContainer container = (EssentiaContainer) sourcecontainers.toArray()[0];
@@ -51,4 +60,6 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 		
 		return targetcontainers;
 	}
+
+
 }

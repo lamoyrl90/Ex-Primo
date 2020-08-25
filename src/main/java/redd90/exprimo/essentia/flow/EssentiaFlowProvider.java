@@ -5,7 +5,6 @@ import java.util.Set;
 
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import redd90.exprimo.essentia.EssentiaContainer;
-import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.essentia.EssentiaStack;
 
 public abstract class EssentiaFlowProvider {
@@ -16,11 +15,11 @@ public abstract class EssentiaFlowProvider {
 	
 	public EssentiaFlowProvider(ICapabilityProvider holder) {
 		this.holder = holder;
-		this.sourcecontainers.add((EssentiaContainer) this.holder.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(EssentiaContainerCap.EMPTY));
-		this.targetcontainers = getTargetContainers();
 	}
 
-	protected abstract Set<EssentiaContainer> getTargetContainers();
+	protected abstract Set<EssentiaContainer> gatherSourceContainers();
+	
+	protected abstract Set<EssentiaContainer> gatherTargetContainers();
 	
 	public void flow() {
 		Set<EssentiaFlow> flows = calculateFlows();

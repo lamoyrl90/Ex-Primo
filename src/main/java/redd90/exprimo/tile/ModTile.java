@@ -8,5 +8,6 @@ public class ModTile extends TileEntity {
 	public <E extends ModTile> ModTile(TileEntityType<E> type) {
 		super(type);
 	}
+	
 
 }

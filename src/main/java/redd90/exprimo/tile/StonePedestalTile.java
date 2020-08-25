@@ -1,11 +1,11 @@
 package redd90.exprimo.tile;
 
-import net.minecraft.tileentity.TileEntityType;
+import redd90.exprimo.registry.ModTiles;
 
 public class StonePedestalTile extends AbstractPedestalTile {
 
-	public StonePedestalTile(TileEntityType<StonePedestalTile> type) {
-		super(type);
+	public StonePedestalTile() {
+		super(ModTiles.STONE_PEDESTAL.get());
 	}
 
 }

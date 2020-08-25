@@ -15,6 +15,7 @@ import redd90.exprimo.registry.Essentias;
 import redd90.exprimo.registry.ModBlocks;
 import redd90.exprimo.registry.ModItems;
 import redd90.exprimo.registry.ModRegistries;
+import redd90.exprimo.registry.ModTiles;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,6 +50,8 @@ public class ExPrimo
     
     public void clientSetup(final FMLClientSetupEvent event) {
     	MinecraftForge.EVENT_BUS.addListener(ClientEventHandler::onDebugRender);
+    	
+    	ModTiles.registerAllTERs();
     }
     
     public void serverStarting(final FMLServerStartingEvent event) {
