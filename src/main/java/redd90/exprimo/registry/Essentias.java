@@ -1,6 +1,5 @@
 package redd90.exprimo.registry;
 
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import redd90.exprimo.ExPrimo;
@@ -16,6 +15,6 @@ public class Essentias {
 	public static final RegistryObject<Essentia> PRIMORDIUM = register("primordium");
 	
 	private static RegistryObject<Essentia> register(String name) {
-		return ESSENTIAS.register(name, () -> new Essentia(name, new TranslationTextComponent("essentia." + name)));
+		return ESSENTIAS.register(name, () -> new Essentia(name));
 	}
 }

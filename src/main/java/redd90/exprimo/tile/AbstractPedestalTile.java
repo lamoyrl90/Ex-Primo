@@ -13,6 +13,8 @@ public abstract class AbstractPedestalTile extends TileWithInventory implements 
 	private ModItemStackHandler itemhandler = new ModItemStackHandler(1, this::markDirtyAndDispatch);
 	private int tickInterval = 40;
 	private final long timePlaced;
+	private double pushfactor = 1.0;
+	private double pullfactor = 1.0;
 	
 	public <E extends AbstractPedestalTile> AbstractPedestalTile(TileEntityType<E> type) {
 		super(type);
@@ -39,6 +41,14 @@ public abstract class AbstractPedestalTile extends TileWithInventory implements 
 				TileEssentiaFlowManager.onTileTick(this);
 			}
 		}
+	}
+	
+	public double getPushFactor() {
+		return pushfactor;
+	}
+	
+	public double getPullFactor() {
+		return pullfactor;
 	}
 	
 	public boolean holdingEssentiaTickable() {

@@ -15,7 +15,7 @@ import redd90.exprimo.essentia.EssentiaContainerCap;
 
 public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 	
-
+	private double factor = 1;
 		
 	public ChunkEssentiaFlowProvider(Chunk chunk) {
 		super(chunk);
@@ -23,10 +23,11 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 		this.targetcontainers = gatherTargetContainers();
 	}
 	
-	public ChunkEssentiaFlowProvider(TileEntity tile, Set<EssentiaContainer> targets) {
+	public ChunkEssentiaFlowProvider(TileEntity tile, Set<EssentiaContainer> targets, double factor) {
 		super((Chunk) tile.getWorld().getChunk(tile.getPos()));
 		this.sourcecontainers = gatherSourceContainers();
 		this.targetcontainers = targets;
+		this.factor = factor;
 	}
 	
 	@Override
@@ -61,6 +62,10 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 		}
 		
 		return targetcontainers;
+	}
+
+	public double getFactor() {
+		return factor;
 	}
 
 

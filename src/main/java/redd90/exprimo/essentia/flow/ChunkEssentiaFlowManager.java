@@ -34,12 +34,12 @@ public class ChunkEssentiaFlowManager {
 		
 		for (Chunk chunk : chunkstoflow) {
 			ChunkEssentiaFlowProvider chunkessentiaflow = new ChunkEssentiaFlowProvider(chunk);
-			chunkessentiaflow.flow();
+			chunkessentiaflow.flow(1.0);
 		}
 		
 		while(!tiletickqueue.isEmpty()) {
 			ChunkEssentiaFlowProvider tileflow = tiletickqueue.poll();
-			tileflow.flow();
+			tileflow.flow(tileflow.getFactor());
 		}
 	}
 	

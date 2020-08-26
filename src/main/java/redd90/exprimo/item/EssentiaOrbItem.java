@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
@@ -16,28 +17,26 @@ import redd90.exprimo.registry.ModItems;
 public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 
 	private final int capacity;
-	private final int vacuumpressure;
+	private final double pushfactor;
+	private final double pullfactor;
 	
 	public EssentiaOrbItem(int capacity) {
 		super(ModItems.defaultProperties().maxStackSize(1));
 		this.capacity = capacity;
-		this.vacuumpressure = 0;
+		this.pushfactor = 1.0;
+		this.pullfactor = 1.0;
 	}
 	
-	public EssentiaOrbItem(int capacity, int vacuumpressure) {
+	public EssentiaOrbItem(int capacity, double pushfactor, double pullfactor) {
 		super(ModItems.defaultProperties());
 		this.capacity = capacity;
-		this.vacuumpressure = vacuumpressure;
+		this.pushfactor = pushfactor;
+		this.pullfactor = pullfactor;
 	}
 
 	@Override
 	public int getCapacity() {
 		return capacity;
-	}
-
-	@Override
-	public int getVacuumPressure() {
-		return vacuumpressure;
 	}
 
 	@Override
@@ -47,10 +46,23 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 			
 			if (essentia != null) {
 				for(EssentiaStack essentiastack : essentia.getStackSet().values()) {
-					list.add(new StringTextComponent(essentiastack.getEssentia().getTranslationKey() + ": " + essentiastack.getAmount()));
+					String essentiakey = essentiastack.getEssentia().getTranslationKey();
+					ITextComponent amount = new StringTextComponent(": " + essentiastack.getAmount());
+					ITextComponent text = new TranslationTextComponent(essentiakey).append(amount);
+					list.add(text);
 				}
 			}
 		}
+	}
+
+	@Override
+	public double getPushFactor() {
+		return pushfactor;
+	}
+
+	@Override
+	public double getPullFactor() {
+		return pullfactor;
 	}
 	
 }

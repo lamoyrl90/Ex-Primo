@@ -113,6 +113,11 @@ public class EssentiaStack {
 					chunk.markDirty();
 				}
 			}
+			
+			//if (holder instanceof ItemStack) {
+			//	ItemStack stack = (ItemStack) holder;
+			//	stack.serializeNBT();
+			//}
 		}
 	}
 }

@@ -1,23 +1,22 @@
 package redd90.exprimo.essentia;
 
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class Essentia extends ForgeRegistryEntry<Essentia> {
 	
 	private final String key;
-	private final TranslationTextComponent translationkey;
+	private final String translationkey;
 	
-	public Essentia(String key, TranslationTextComponent translationkey) {
+	public Essentia(String key) {
 		this.key = key;
-		this.translationkey = translationkey;
+		this.translationkey = "essentia." + key;
 	}
 	
 	public String getKey() {
 		return key;
 	}
 	
-	public TranslationTextComponent getTranslationKey() {
+	public String getTranslationKey() {
 		return translationkey;
 	}
 }
