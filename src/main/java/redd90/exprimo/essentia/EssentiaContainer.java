@@ -23,7 +23,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
 	private final Optional<ICapabilityProvider> holder;
-	private int capacity = 10000;
+	private int capacity = 1000;
 	
 	public EssentiaContainer(ICapabilityProvider holder) {
 		this.holder = Optional.of(holder);
@@ -152,20 +152,26 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			return 0;
 		for (EssentiaStack stack : getStackSet().values()) {
 			if(stack.getEssentia().getKey() != essentiakey) {
-				pressure += stack.getAmount();
+				//pressure += stack.getAmount();
 			} else {
-				pressure -= (int) Math.floor(Math.sqrt(stack.getAmount()));
-				pressure += calculateOverfilled(stack.getAmount());
+				//pressure -= (int) Math.floor(Math.sqrt(stack.getAmount()));
+				pressure += value;
+				//pressure += calculateOverfilled(stack.getAmount());
 			}
 		}
-		int divisor = value + pressure == 0 ? 1 : value + pressure;
-		return Math.floorDiv(value * pressure, divisor);
+		int divisor = 1;//pressure + value == 0 ? 1 : pressure + value;
+		int dividend = pressure;// * value;
+		return Math.floorDiv(dividend,divisor);
+		//return Math.floorDiv(pressure * value, divisor);
 	}
 	
 	
 	private int calculateOverfilled(int amount) {
-		int diff = Math.max(0, amount - capacity);
-		return diff * diff;
+		if (amount < capacity)
+			return 0;
+		int diff = amount - capacity;
+		diff = (int) Math.pow(amount, 2);
+		return diff;
 	}
 	
 	public void transfer(String essentiakey, EssentiaContainer target, int amount) {

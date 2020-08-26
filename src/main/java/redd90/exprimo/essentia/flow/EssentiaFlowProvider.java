@@ -25,7 +25,7 @@ public abstract class EssentiaFlowProvider {
 		Set<EssentiaFlow> flows = calculateFlows();
 		int count = flows.size();
 		for(EssentiaFlow flow : flows) {
-			if(flow.getValue() != 0)
+			if(flow.getValue() > 0)
 				flow.getSource().transfer(flow.getKey(), flow.getTarget(), Math.floorDiv((int) (flow.getValue()*factor), count));
 		}
 	}
@@ -51,6 +51,6 @@ public abstract class EssentiaFlowProvider {
 	}
 	
 	protected int getPressureDiff(EssentiaContainer source, EssentiaContainer target, String essentiakey) {
-		return source.getInnerPressure(essentiakey) - target.getInnerPressure(essentiakey);
+		return (source.getInnerPressure(essentiakey) - target.getInnerPressure(essentiakey));
 	}
 }
