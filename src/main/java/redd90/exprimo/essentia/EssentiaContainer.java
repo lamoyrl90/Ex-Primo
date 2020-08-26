@@ -22,6 +22,7 @@ import redd90.exprimo.registry.ModRegistries;
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
+	private HashMap<String, Double> essentiaweights;
 	private final Optional<ICapabilityProvider> holder;
 	private int capacity = 1000;
 	
@@ -32,15 +33,26 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			if (item instanceof IEssentiaContainerItem)
 				this.capacity = ((IEssentiaContainerItem)item).getCapacity();
 		}
+		this.essentiaweights = initializeWeights();
 	}
 	
 	public EssentiaContainer() {
 		this.holder = Optional.empty();
+		this.essentiaweights = initializeWeights();
 	}
 	
 	public EssentiaContainer(ICapabilityProvider holder, HashMap<String, EssentiaStack> stackset) {
 		this.holder = Optional.of(holder);
 		this.setStackSet(stackset);
+		this.essentiaweights = initializeWeights();
+	}
+	
+	private HashMap<String, Double> initializeWeights() {
+		HashMap<String, Double> map = new HashMap<>();
+		for (Essentia essentia : ModRegistries.ESSENTIAS) {
+			map.put(essentia.getKey(), 1.0);
+		}
+		return map;
 	}
 	
 	public HashMap<String, EssentiaStack> createEmptyStackSet() {
@@ -147,9 +159,13 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 
 	public int getInnerPressure(String essentiakey) {
 		int value = getStack(essentiakey).getAmount();
-		int pressure = 0;
 		if (value == 0)
 			return 0;
+		double divisor = essentiaweights.get(essentiakey);
+		divisor = divisor == 0 ? 1 : divisor;
+		int pressure = (int) Math.floor(value / essentiaweights.get(essentiakey));
+		return pressure;
+		/*
 		for (EssentiaStack stack : getStackSet().values()) {
 			if(stack.getEssentia().getKey() != essentiakey) {
 				//pressure += stack.getAmount();
@@ -158,21 +174,21 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 				pressure += value;
 				//pressure += calculateOverfilled(stack.getAmount());
 			}
-		}
-		int divisor = 1;//pressure + value == 0 ? 1 : pressure + value;
-		int dividend = pressure;// * value;
-		return Math.floorDiv(dividend,divisor);
+		}*/
+		//int divisor = 1;//pressure + value == 0 ? 1 : pressure + value;
+		//int dividend = pressure;// * value;
+		//return Math.floorDiv(dividend,divisor);
 		//return Math.floorDiv(pressure * value, divisor);
 	}
 	
-	
+	/*
 	private int calculateOverfilled(int amount) {
 		if (amount < capacity)
 			return 0;
 		int diff = amount - capacity;
 		diff = (int) Math.pow(amount, 2);
 		return diff;
-	}
+	}*/
 	
 	public void transfer(String essentiakey, EssentiaContainer target, int amount) {
 		if(getStackSet().containsKey(essentiakey) && target.getStackSet().containsKey(essentiakey)) {
@@ -181,6 +197,14 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			getStack(essentiakey).shrink(amount);
 			target.getStack(essentiakey).grow(amount);
 		}
+	}
+
+	public double getEssentiaweight(String essentiakey) {
+		return essentiaweights.get(essentiakey);
+	}
+
+	public void setEssentiaWeights(HashMap<String, Double> weights) {
+		this.essentiaweights = weights;
 	}
 	
 }
