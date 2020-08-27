@@ -5,10 +5,14 @@ import java.util.List;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import redd90.exprimo.client.text.ModText;
 import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.essentia.EssentiaStack;
@@ -48,7 +52,7 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 				for(EssentiaStack essentiastack : essentia.getStackSet().values()) {
 					String essentiakey = essentiastack.getEssentia().getTranslationKey();
 					ITextComponent amount = new StringTextComponent(": " + essentiastack.getAmount());
-					ITextComponent text = new TranslationTextComponent(essentiakey).append(amount);
+					IFormattableTextComponent text = ModText.withColor(new TranslationTextComponent(essentiakey), essentiastack.getEssentia().getColor()).append(amount);
 					list.add(text);
 				}
 			}

@@ -4,6 +4,8 @@ import redd90.exprimo.essentia.Essentia;
 import redd90.exprimo.essentia.EssentiaContainer;
 
 class EssentiaFlow {
+	private static final double GLOBAL_FLOW_RATE = 0.25;
+	
 	private final EssentiaContainer source;
 	private final EssentiaContainer target;
 	private final Essentia essentia;
@@ -13,7 +15,7 @@ class EssentiaFlow {
 		this.essentia = essentia;
 		this.source = source;
 		this.target = target;
-		this.value = value;
+		this.value = (int) (value * GLOBAL_FLOW_RATE);
 	}
 
 	public Essentia getEssentia() {
