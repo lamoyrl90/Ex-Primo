@@ -10,6 +10,7 @@ public class ModText {
 	public static IFormattableTextComponent withColor(IFormattableTextComponent textIn, @Nonnull int colorIn) {
 		Style style = textIn.getStyle();
 		style.setColor(Color.func_240743_a_(colorIn));
+		textIn.mergeStyle(style);
 		return textIn;
 	}
 }
