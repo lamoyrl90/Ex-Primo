@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -108,27 +109,51 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 
 	@Override
 	public CompoundNBT serializeNBT() {
-		ListNBT list = new ListNBT();
+		ListNBT list1 = new ListNBT();
+		ListNBT list2 = new ListNBT();
 		for(Entry<String, EssentiaStack> entry : stackset.entrySet()) {
 			CompoundNBT tag = new CompoundNBT();
 			tag.putString("type", entry.getValue().getEssentia().getKey());
 			tag.putInt("amount", entry.getValue().getAmount());
-			list.add(tag);
+			list1.add(tag);
+		}
+		for(Entry<Essentia, Double> entry : essentiaweights.entrySet()) {
+			CompoundNBT tag = new CompoundNBT();
+			tag.putString("type", entry.getKey().getKey());
+			tag.putDouble("amount", entry.getValue());
+			list2.add(tag);
 		}
 		CompoundNBT compound = new CompoundNBT();
-		compound.put("essentia_stacks", list);
+		compound.put("essentia_stacks", list1);
+		compound.putInt("capacity", capacity);
+		compound.put("essentia_weights", list2);
+		
 		return compound;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
-		ListNBT list = nbt.getList("essentia_stacks", 10);
-		for (INBT entry : list) {
+		HashMap<Essentia,Double> nbtweights = new HashMap<>();
+		
+		ListNBT list1 = nbt.getList("essentia_stacks", 10);
+		for (INBT entry : list1) {
 			CompoundNBT tag = (CompoundNBT) entry;
 			String type = tag.getString("type");
 			int amount = tag.getInt("amount");
 			this.getStack(type).setAmount(amount);
 		}
+		
+		this.capacity = nbt.getInt("capacity");
+		
+		ListNBT list2 = nbt.getList("essentia_weights", 10);
+		for (INBT entry : list2) {
+			CompoundNBT tag = (CompoundNBT) entry;
+			Essentia type = ModRegistries.ESSENTIAS.getValue(new ResourceLocation(ExPrimo.MODID, tag.getString()));
+			double weight = tag.getDouble("weight");
+			nbtweights.put(type, weight);
+		}
+		this.setEssentiaWeights(nbtweights);
+		
 	}
 
 	public ICapabilityProvider getHolder() {
@@ -165,30 +190,8 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		divisor = divisor == 0 ? 1 : divisor;
 		int pressure = (int) Math.floor(value / essentiaweights.get(essentia));
 		return pressure;
-		/*
-		for (EssentiaStack stack : getStackSet().values()) {
-			if(stack.getEssentia().getKey() != essentiakey) {
-				//pressure += stack.getAmount();
-			} else {
-				//pressure -= (int) Math.floor(Math.sqrt(stack.getAmount()));
-				pressure += value;
-				//pressure += calculateOverfilled(stack.getAmount());
-			}
-		}*/
-		//int divisor = 1;//pressure + value == 0 ? 1 : pressure + value;
-		//int dividend = pressure;// * value;
-		//return Math.floorDiv(dividend,divisor);
-		//return Math.floorDiv(pressure * value, divisor);
 	}
 	
-	/*
-	private int calculateOverfilled(int amount) {
-		if (amount < capacity)
-			return 0;
-		int diff = amount - capacity;
-		diff = (int) Math.pow(amount, 2);
-		return diff;
-	}*/
 	
 	public void transfer(Essentia essentia, EssentiaContainer target, int amount) {
 		if(getStackSet().containsKey(essentia.getKey()) && target.getStackSet().containsKey(essentia.getKey())) {
