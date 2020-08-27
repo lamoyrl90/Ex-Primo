@@ -46,8 +46,12 @@ public class ChunkEssentiaBuilder {
 		this.x = this.chunk.getPos().getXStart();
 		this.z = this.chunk.getPos().getZStart();
 		
-		this.container = new EssentiaContainer(chunk);
+		this.container = new EssentiaContainer();
 		this.noises = getOrCreateGenerators(worldkey);
+	}
+	
+	public static boolean isGenerated(EssentiaContainer containerIn) {
+		return containerIn.isChunkGen();
 	}
 	
 	private HashMap<Essentia, OctavesNoiseGenerator> getOrCreateGenerators(RegistryKey<World> worldkey) {
@@ -62,12 +66,19 @@ public class ChunkEssentiaBuilder {
 		return map;
 	}
 	
-	public EssentiaContainer createContainer() {
-		applyWeights();
-		applyNoise();
-		initializeAmounts();
-		container.setEssentiaWeights(builtweights);
-		return container;
+	public static void validateContainer(ServerWorld world, Chunk chunk) {
+		EssentiaContainer containerIn = (EssentiaContainer) chunk.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(null); 
+		if (containerIn != null && !isGenerated(containerIn)) {
+			ChunkEssentiaBuilder builder = new ChunkEssentiaBuilder(world, chunk);
+			builder.applyWeights();
+			builder.applyNoise();
+			builder.initializeAmounts();
+			containerIn.setStackSet(builder.container.getStackSet());
+			containerIn.setEssentiaWeights(builder.container.getEssentiaWeights());
+			containerIn.setChunkGen(true);
+		}
+		//container.setEssentiaWeights(builtweights);
+		//return container;
 	}
 
 	private ChunkEssentiaBuilder applyNoise() {
@@ -167,11 +178,11 @@ public class ChunkEssentiaBuilder {
 			}
 		}
 		
-		int aquatotal = 768 + sumFactors(factors.get(AQUA));
-		int ignistotal = 768 +sumFactors(factors.get(IGNIS));
-		int aertotal = 768 + sumFactors(factors.get(AER));
-		int terratotal = 768 + sumFactors(factors.get(TERRA));
-		double primordium = 768;
+		int aquatotal = 1000 + sumFactors(factors.get(AQUA));
+		int ignistotal = 1000 +sumFactors(factors.get(IGNIS));
+		int aertotal = 1000 + sumFactors(factors.get(AER));
+		int terratotal = 1000 + sumFactors(factors.get(TERRA));
+		double primordium = 1000;
 		
 		double total = aquatotal + ignistotal + aertotal + terratotal + primordium;
 		
@@ -200,7 +211,7 @@ public class ChunkEssentiaBuilder {
 	
 	private ChunkEssentiaBuilder initializeAmounts() {
 		for (EssentiaStack stack : container.getStackSet().values()) {
-			int amount = (int) (1000 * builtweights.get(stack.getEssentia()));
+			int amount = 1000;//(int) (1000 * builtweights.get(stack.getEssentia()));
 			container.getStack(stack.getEssentia().getKey()).setAmount(amount);
 		}
 		

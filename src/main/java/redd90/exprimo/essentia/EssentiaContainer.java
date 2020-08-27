@@ -26,6 +26,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	private HashMap<Essentia, Double> essentiaweights;
 	private final Optional<ICapabilityProvider> holder;
 	private int capacity = 1000;
+	private boolean chunkGen = false;
 	
 	public EssentiaContainer(ICapabilityProvider holder) {
 		this.holder = Optional.of(holder);
@@ -127,6 +128,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		compound.put("essentia_stacks", list1);
 		compound.putInt("capacity", capacity);
 		compound.put("essentia_weights", list2);
+		compound.putBoolean("chunkgen", chunkGen);
 		
 		return compound;
 	}
@@ -148,11 +150,12 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		ListNBT list2 = nbt.getList("essentia_weights", 10);
 		for (INBT entry : list2) {
 			CompoundNBT tag = (CompoundNBT) entry;
-			Essentia type = ModRegistries.ESSENTIAS.getValue(new ResourceLocation(ExPrimo.MODID, tag.getString()));
+			Essentia type = ModRegistries.ESSENTIAS.getValue(new ResourceLocation(ExPrimo.MODID, tag.getString("type")));
 			double weight = tag.getDouble("weight");
 			nbtweights.put(type, weight);
 		}
 		this.setEssentiaWeights(nbtweights);
+		this.chunkGen = nbt.getBoolean("chunkgen");
 		
 	}
 
@@ -160,7 +163,8 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		if (holder.isPresent()) {
 			return holder.get();
 		} else {
-			throw new IllegalArgumentException("Essentia Container has no holder!");
+			//ExPrimo.LOGGER.error("Essentia Container has no holder!");
+			return null;
 		}
 	}
 	
@@ -202,7 +206,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		}
 	}
 
-	public double getEssentiaweight(Essentia essentia) {
+	public double getEssentiaWeight(Essentia essentia) {
 		return essentiaweights.get(essentia);
 	}
 
@@ -210,4 +214,15 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		this.essentiaweights = weights;
 	}
 	
+	public HashMap<Essentia,Double> getEssentiaWeights() {
+		return essentiaweights;
+	}
+
+	public boolean isChunkGen() {
+		return chunkGen;
+	}
+
+	public void setChunkGen(boolean chunkGen) {
+		this.chunkGen = chunkGen;
+	}
 }

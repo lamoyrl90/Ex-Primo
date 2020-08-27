@@ -13,7 +13,7 @@ public class ModItems {
 	
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ExPrimo.MODID);
 	
-	public static final RegistryObject<EssentiaOrbItem> ESSENTIA_ORB_DULL = ITEMS.register("essentia_orb_dull", () -> new EssentiaOrbItem(1000, 2, 0.5));
+	public static final RegistryObject<EssentiaOrbItem> ESSENTIA_ORB_DULL = ITEMS.register("essentia_orb_dull", () -> new EssentiaOrbItem(1000, .025, 0.05));
 	
 	public static Item.Properties defaultProperties() {
 		return new Item.Properties().group(MOD_GROUP);
