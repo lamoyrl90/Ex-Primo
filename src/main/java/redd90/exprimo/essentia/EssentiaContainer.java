@@ -22,7 +22,7 @@ import redd90.exprimo.registry.ModRegistries;
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
-	private HashMap<String, Double> essentiaweights;
+	private HashMap<Essentia, Double> essentiaweights;
 	private final Optional<ICapabilityProvider> holder;
 	private int capacity = 1000;
 	
@@ -47,10 +47,10 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		this.essentiaweights = initializeWeights();
 	}
 	
-	private HashMap<String, Double> initializeWeights() {
-		HashMap<String, Double> map = new HashMap<>();
+	private HashMap<Essentia, Double> initializeWeights() {
+		HashMap<Essentia, Double> map = new HashMap<>();
 		for (Essentia essentia : ModRegistries.ESSENTIAS) {
-			map.put(essentia.getKey(), 1.0);
+			map.put(essentia, 1.0);
 		}
 		return map;
 	}
@@ -157,13 +157,13 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		this.capacity = capacity;
 	}
 
-	public int getInnerPressure(String essentiakey) {
-		int value = getStack(essentiakey).getAmount();
+	public int getInnerPressure(Essentia essentia) {
+		int value = getStack(essentia).getAmount();
 		if (value == 0)
 			return 0;
-		double divisor = essentiaweights.get(essentiakey);
+		double divisor = essentiaweights.get(essentia);
 		divisor = divisor == 0 ? 1 : divisor;
-		int pressure = (int) Math.floor(value / essentiaweights.get(essentiakey));
+		int pressure = (int) Math.floor(value / essentiaweights.get(essentia));
 		return pressure;
 		/*
 		for (EssentiaStack stack : getStackSet().values()) {
@@ -190,20 +190,20 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		return diff;
 	}*/
 	
-	public void transfer(String essentiakey, EssentiaContainer target, int amount) {
-		if(getStackSet().containsKey(essentiakey) && target.getStackSet().containsKey(essentiakey)) {
-			int stackamt = getStack(essentiakey).getAmount();
+	public void transfer(Essentia essentia, EssentiaContainer target, int amount) {
+		if(getStackSet().containsKey(essentia.getKey()) && target.getStackSet().containsKey(essentia.getKey())) {
+			int stackamt = getStack(essentia).getAmount();
 			amount = Math.max(0, Math.min(stackamt, amount));
-			getStack(essentiakey).shrink(amount);
-			target.getStack(essentiakey).grow(amount);
+			getStack(essentia).shrink(amount);
+			target.getStack(essentia).grow(amount);
 		}
 	}
 
-	public double getEssentiaweight(String essentiakey) {
-		return essentiaweights.get(essentiakey);
+	public double getEssentiaweight(Essentia essentia) {
+		return essentiaweights.get(essentia);
 	}
 
-	public void setEssentiaWeights(HashMap<String, Double> weights) {
+	public void setEssentiaWeights(HashMap<Essentia, Double> weights) {
 		this.essentiaweights = weights;
 	}
 	

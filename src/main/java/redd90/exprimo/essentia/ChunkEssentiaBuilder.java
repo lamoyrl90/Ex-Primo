@@ -19,20 +19,20 @@ import redd90.exprimo.registry.ModRegistries;
 
 public class ChunkEssentiaBuilder {
 	
-	private static final String AQUA = Essentias.AQUA.get().getKey();
-	private static final String AER = Essentias.AER.get().getKey();
-	private static final String IGNIS = Essentias.IGNIS.get().getKey();
-	private static final String TERRA = Essentias.TERRA.get().getKey();
-	private static final String PRIMORDIUM = Essentias.PRIMORDIUM.get().getKey();
+	private static final Essentia AQUA = Essentias.AQUA.get();
+	private static final Essentia AER = Essentias.AER.get();
+	private static final Essentia IGNIS = Essentias.IGNIS.get();
+	private static final Essentia TERRA = Essentias.TERRA.get();
+	private static final Essentia PRIMORDIUM = Essentias.PRIMORDIUM.get();
 
-	private static HashMap<RegistryKey<World>, HashMap<String, OctavesNoiseGenerator>> generators = new HashMap<>();
+	private static HashMap<RegistryKey<World>, HashMap<Essentia, OctavesNoiseGenerator>> generators = new HashMap<>();
 	
-	private HashMap<String, Double> builtweights = new HashMap<>();
+	private HashMap<Essentia, Double> builtweights = new HashMap<>();
 	private EssentiaContainer container;
 	private ServerWorld world;
 	private final long seed;
 	private final SharedSeedRandom seedRandom;
-	private HashMap<String, OctavesNoiseGenerator> noises;
+	private HashMap<Essentia, OctavesNoiseGenerator> noises;
 	private final int x;
 	private final int z;
 	private Chunk chunk;
@@ -50,13 +50,13 @@ public class ChunkEssentiaBuilder {
 		this.noises = getOrCreateGenerators(worldkey);
 	}
 	
-	private HashMap<String, OctavesNoiseGenerator> getOrCreateGenerators(RegistryKey<World> worldkey) {
+	private HashMap<Essentia, OctavesNoiseGenerator> getOrCreateGenerators(RegistryKey<World> worldkey) {
 		if(generators.containsKey(worldkey))
 			return generators.get(worldkey);
 		
-		HashMap<String, OctavesNoiseGenerator> map = new HashMap<>();
+		HashMap<Essentia, OctavesNoiseGenerator> map = new HashMap<>();
 		for (EssentiaStack stack : container.getStackSet().values()) {
-			map.put(stack.getEssentia().getKey(), new OctavesNoiseGenerator(this.seedRandom, IntStream.rangeClosed(-15,0)));
+			map.put(stack.getEssentia(), new OctavesNoiseGenerator(this.seedRandom, IntStream.rangeClosed(-15,0)));
 		}
 		generators.put(worldkey, map);
 		return map;
@@ -72,23 +72,23 @@ public class ChunkEssentiaBuilder {
 
 	private ChunkEssentiaBuilder applyNoise() {
 		for(EssentiaStack stack : container.getStackSet().values()) {
-			String key = stack.getEssentia().getKey();
-			double point = Math.floor(noises.get(key).noiseAt(x<<8, z<<8, world.getSeaLevel(), 1.0));
+			Essentia essentia = stack.getEssentia();
+			double point = Math.floor(noises.get(essentia).noiseAt(x<<8, z<<8, world.getSeaLevel(), 1.0));
 			if (point > 2) {
-				double newweight = builtweights.get(key);
+				double newweight = builtweights.get(essentia);
 				newweight *= 1 + (point-2);
-				builtweights.put(key, newweight);
+				builtweights.put(essentia, newweight);
 			}
 		}
 		return this;
 	}
 	
 	private ChunkEssentiaBuilder applyWeights() {
-		HashMap<String, Double> weights = new HashMap<>();
-		HashMap<String, List<Integer>> factors = new HashMap<>();
+		HashMap<Essentia, Double> weights = new HashMap<>();
+		HashMap<Essentia, List<Integer>> factors = new HashMap<>();
 		
 		for (Essentia essentia : ModRegistries.ESSENTIAS) {
-			factors.put(essentia.getKey(), new ArrayList<>());
+			factors.put(essentia, new ArrayList<>());
 		}
 		
 		int sealevel = world.getSeaLevel();
@@ -183,7 +183,7 @@ public class ChunkEssentiaBuilder {
 		
 		container.setEssentiaWeights(weights);
 		
-		for (Entry<String, Double> entry : weights.entrySet()) {
+		for (Entry<Essentia, Double> entry : weights.entrySet()) {
 			builtweights.put(entry.getKey(), entry.getValue());
 		}
 		
@@ -200,7 +200,7 @@ public class ChunkEssentiaBuilder {
 	
 	private ChunkEssentiaBuilder initializeAmounts() {
 		for (EssentiaStack stack : container.getStackSet().values()) {
-			int amount = (int) (1000 * builtweights.get(stack.getEssentia().getKey()));
+			int amount = (int) (1000 * builtweights.get(stack.getEssentia()));
 			container.getStack(stack.getEssentia().getKey()).setAmount(amount);
 		}
 		

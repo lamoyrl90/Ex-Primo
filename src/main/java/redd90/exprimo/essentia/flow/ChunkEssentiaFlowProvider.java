@@ -1,6 +1,7 @@
 package redd90.exprimo.essentia.flow;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
@@ -15,12 +16,14 @@ import redd90.exprimo.essentia.EssentiaContainerCap;
 
 public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 	
+	private final Optional<TileEntity> te;
 	private double factor = 1;
 		
 	public ChunkEssentiaFlowProvider(Chunk chunk) {
 		super(chunk);
 		this.sourcecontainers = gatherSourceContainers();
 		this.targetcontainers = gatherTargetContainers();
+		this.te = Optional.empty();
 	}
 	
 	public ChunkEssentiaFlowProvider(TileEntity tile, Set<EssentiaContainer> targets, double factor) {
@@ -28,6 +31,7 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 		this.sourcecontainers = gatherSourceContainers();
 		this.targetcontainers = targets;
 		this.factor = factor;
+		this.te = Optional.of(tile);
 	}
 	
 	@Override
@@ -68,5 +72,10 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 		return factor;
 	}
 
+	public TileEntity getTile() {
+		if (te.isPresent())
+			return te.get();
+		return null;
+	}
 
 }

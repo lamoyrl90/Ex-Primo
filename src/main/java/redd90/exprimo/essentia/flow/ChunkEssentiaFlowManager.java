@@ -1,12 +1,16 @@
 package redd90.exprimo.essentia.flow;
 
+import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ChunkHolder;
 import net.minecraft.world.server.ChunkManager;
@@ -14,6 +18,7 @@ import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import redd90.exprimo.ExPrimo;
+import redd90.exprimo.client.particle.EssentiaFlowParticleData;
 
 public class ChunkEssentiaFlowManager {
 
@@ -39,7 +44,28 @@ public class ChunkEssentiaFlowManager {
 		
 		while(!tiletickqueue.isEmpty()) {
 			ChunkEssentiaFlowProvider tileflow = tiletickqueue.poll();
-			tileflow.flow(tileflow.getFactor());
+			Color color = new Color(tileflow.flow(tileflow.getFactor()));
+			double b = (double) color.getBlue() / 255;
+			double g = (double) color.getGreen() / 255;
+			double r = (double) color.getRed() / 255;
+			TileEntity tile = tileflow.getTile();
+			if (r == 0 && g == 0 && b == 0) {
+				continue;
+			}
+			if (tile != null) {
+				BlockPos pos = tile.getPos();
+				Random rand = world.getRandom();
+				
+				double px = pos.getX() + rand.nextDouble();
+				double py = pos.getY() + rand.nextDouble() + 1.0;
+				double pz = pos.getZ() + rand.nextDouble();
+				
+				world.spawnParticle(new EssentiaFlowParticleData(r, g, b), 
+						px, 
+						py, 
+						pz, 
+						1, (px - pos.getX())/10, (py - pos.getY()-1)/10, (pz - pos.getZ())/10, 0.0D);
+			}
 		}
 	}
 	

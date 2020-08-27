@@ -27,22 +27,26 @@ public abstract class AbstractPedestalTile extends TileWithInventory implements 
 	}
 
 	public ModItemStackHandler getInventory() {
-		return this.itemhandler;
+		return itemhandler;
 	}
 	
 	@Override
 	public void tick() {
-		if (!this.world.isRemote()) {
+		if (!world.isRemote()) {
 			if (!holdingEssentiaTickable())
 				return;
 			ServerWorld world = (ServerWorld) this.world;
 			int time = (int) (world.getGameTime() - timePlaced);
-			if (time % this.tickInterval == 0) {
+			if (time % getTickInterval() == 0) {
 				TileEssentiaFlowManager.onTileTick(this);
 			}
 		}
 	}
 	
+	private int getTickInterval() {
+		return tickInterval;
+	}
+
 	public double getPushFactor() {
 		return pushfactor;
 	}
