@@ -99,7 +99,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 
 	public int getInnerPressure(Essentia essentia) {
 		int eq = equilibrium.getValue(essentia);
-		int value = stackset.getAmount(essentia);
+		int value = getStack(essentia);
 		int total = 0;
 		for (Essentia e : ModRegistries.ESSENTIAS) {
 			total += getStack(e);

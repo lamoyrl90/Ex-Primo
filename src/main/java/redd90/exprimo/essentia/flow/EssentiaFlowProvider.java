@@ -33,7 +33,7 @@ public abstract class EssentiaFlowProvider {
 		int count = flows.size();
 		for(EssentiaFlow flow : flows) {
 			if(flow.getValue() > 0) {
-				int amount = Math.floorDiv((int) (flow.getValue()*factor), count);
+				int amount = Math.floorDiv((int) Math.floor(flow.getValue()*factor), count);
 				flow.getSource().transfer(flow.getEssentia(), flow.getTarget(), amount);
 				colorfactors.add(Pair.of(flow.getEssentia(), amount));
 			}
