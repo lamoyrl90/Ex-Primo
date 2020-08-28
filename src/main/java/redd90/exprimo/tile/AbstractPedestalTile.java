@@ -12,18 +12,14 @@ public abstract class AbstractPedestalTile extends TileWithInventory implements 
 
 	private ModItemStackHandler itemhandler = new ModItemStackHandler(1, this::markDirtyAndDispatch);
 	private int tickInterval = 40;
-	private final long timePlaced;
+	private long timePlaced;
 	private double pushfactor = 1.0;
 	private double pullfactor = 1.0;
+	private boolean flag = false;
 	
 	public <E extends AbstractPedestalTile> AbstractPedestalTile(TileEntityType<E> type) {
 		super(type);
 		this.itemhandler.setDefaultSlotLimit(1);
-		if (this.getWorld() != null && !this.getWorld().isRemote()) {
-			this.timePlaced = this.getWorld().getGameTime();
-		} else {
-			this.timePlaced = 0;
-		}
 	}
 
 	public ModItemStackHandler getInventory() {
@@ -32,6 +28,11 @@ public abstract class AbstractPedestalTile extends TileWithInventory implements 
 	
 	@Override
 	public void tick() {
+		if(!flag) {
+			flag = true;
+			timePlaced = world.getGameTime();
+		}
+		
 		if (!world.isRemote()) {
 			if (!holdingEssentiaTickable())
 				return;

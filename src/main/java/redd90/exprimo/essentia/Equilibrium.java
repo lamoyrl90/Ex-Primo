@@ -4,11 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
-import redd90.exprimo.ExPrimo;
 import redd90.exprimo.registry.ModRegistries;
 
 public class Equilibrium implements INBTSerializable<CompoundNBT> {
@@ -30,6 +26,11 @@ public class Equilibrium implements INBTSerializable<CompoundNBT> {
 		}
 	}
 	
+	public Equilibrium(Equilibrium eqIn) {
+		this();
+		setValues(eqIn);
+	}
+	
 	public void setValues(Equilibrium eqIn) {
 		for (Entry<Essentia,Integer> entry : map.entrySet()) {
 			Essentia e = entry.getKey();
@@ -47,28 +48,20 @@ public class Equilibrium implements INBTSerializable<CompoundNBT> {
 
 	@Override
 	public CompoundNBT serializeNBT() {
-		ListNBT list = new ListNBT();
-		for (Entry<Essentia,Integer> entry : map.entrySet()) {
-			CompoundNBT tag1 = new CompoundNBT();
-			tag1.putString("essentia", entry.getKey().getKey());
-			CompoundNBT tag2 = new CompoundNBT();
-			tag2.putInt("value", entry.getValue());
-			list.add(tag1);
-			list.add(tag2);
-		}
 		CompoundNBT ret = new CompoundNBT();
-		ret.put("equilibrium", list);
+		for (Entry<Essentia,Integer> entry : map.entrySet()) {
+			String e = entry.getKey().getKey();
+			int v = entry.getValue();
+			ret.putInt(e, v);
+		}
 		return ret;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
-		ListNBT list = nbt.getList("equilibrium", 10);
-		for (INBT tag : list) {
-			CompoundNBT nbttag = (CompoundNBT) tag;
-			Essentia e = ModRegistries.ESSENTIAS.getValue(new ResourceLocation(ExPrimo.MODID, nbttag.getString("essentia")));
-			int v = nbttag.getInt("value");
-			map.put(e,v);
+		for (Essentia e : ModRegistries.ESSENTIAS) {
+			int v = nbt.getInt(e.getKey());
+			map.put(e, v);
 		}
 	}
 }

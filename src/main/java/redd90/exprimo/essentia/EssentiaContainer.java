@@ -10,6 +10,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import redd90.exprimo.item.IEssentiaContainerItem;
+import redd90.exprimo.registry.ModRegistries;
 
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
@@ -25,15 +26,18 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			if (item instanceof IEssentiaContainerItem)
 				this.setEquilibrium(new Equilibrium(((IEssentiaContainerItem)item).getCapacity()));
 		}
+		stackset.setHolder(this);
 	}
 	
 	public EssentiaContainer() {
 		this.holder = Optional.empty();
+		stackset.setHolder(this);
 	}
 	
 	public EssentiaContainer(ICapabilityProvider holder, StackSet stackset) {
 		this.holder = Optional.of(holder);
 		this.setStackSet(stackset);
+		stackset.setHolder(this);
 	}
 		
 	public int getStack(Essentia essentia) {
@@ -96,9 +100,13 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	public int getInnerPressure(Essentia essentia) {
 		int eq = equilibrium.getValue(essentia);
 		int value = stackset.getAmount(essentia);
+		int total = 0;
+		for (Essentia e : ModRegistries.ESSENTIAS) {
+			total += getStack(e);
+		}
 		if (eq == 0)
 			eq = 1;
-		return (int) Math.floorDiv(value * value,eq);
+		return (int) Math.floorDiv(value * total,eq);
 	}
 	
 	
