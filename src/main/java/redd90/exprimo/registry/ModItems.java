@@ -15,14 +15,20 @@ public class ModItems {
 	
 	public static final RegistryObject<EssentiaOrbItem> ESSENTIA_ORB_DULL = ITEMS.register("essentia_orb_dull", () -> new EssentiaOrbItem(100, 0.05, 0.025));
 	
-	public static Item.Properties defaultProperties() {
-		return new Item.Properties().group(MOD_GROUP);
-	}
-	
 	public static final ItemGroup MOD_GROUP = new ItemGroup(ExPrimo.MODID) {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ModBlocks.STONE_PEDESTAL.get());
         }
     };
+    
+    public static Item[] getEssentiaColoredItems() {
+    	Item[] items = {ESSENTIA_ORB_DULL.get()};
+    	return items;
+    }
+    
+	public static Item.Properties defaultProperties() {
+		return new Item.Properties().group(MOD_GROUP);
+	}
+	
 }

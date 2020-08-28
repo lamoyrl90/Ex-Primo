@@ -4,7 +4,7 @@ import redd90.exprimo.essentia.Essentia;
 import redd90.exprimo.essentia.EssentiaContainer;
 
 class EssentiaFlow {
-	private static final double GLOBAL_FLOW_RATE = 0.1;
+	private static final double GLOBAL_FLOW_RATE = 0.2;
 	
 	private final EssentiaContainer source;
 	private final EssentiaContainer target;

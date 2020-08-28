@@ -4,20 +4,24 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import redd90.exprimo.ExPrimo;
 import redd90.exprimo.essentia.Essentia;
 import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.essentia.IEssentiaContainer;
 import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
+import redd90.exprimo.item.IEssentiaContainerItem;
+import redd90.exprimo.registry.ModItems;
 import redd90.exprimo.registry.ModRegistries;
 
 public class ClientEventHandler {
-
+	
 	public static void onDebugRender(RenderGameOverlayEvent.Text event) {
 		Minecraft mc = Minecraft.getInstance();
 		ClientPlayerEntity player = mc.player;
@@ -37,6 +41,9 @@ public class ClientEventHandler {
 		}
 		left.add("enqueued: " + ChunkEssentiaFlowManager.getNumberChunksInQueue());
 		
+	}
+	public static void onRegisterItemColors(ColorHandlerEvent.Item event) {
+		event.getItemColors().register((stack,  color) -> { return color == 0 ? ((IEssentiaContainerItem)stack.getItem()).getColor(stack) : -1; }, (Item[]) (ModItems.getEssentiaColoredItems()));
 	}
 	
 }

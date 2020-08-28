@@ -40,6 +40,7 @@ public abstract class AbstractPedestalTile extends TileWithInventory implements 
 			int time = (int) (world.getGameTime() - timePlaced);
 			if (time % getTickInterval() == 0) {
 				TileEssentiaFlowManager.onTileTick(this);
+				markDirty();
 			}
 		}
 	}

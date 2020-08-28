@@ -37,6 +37,7 @@ public class ExPrimo
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(ModParticles::onRegisterParticleFactories);
         modEventBus.addGenericListener(ParticleType.class, ModParticles::onRegisterParticleTypes);
+        modEventBus.addListener(ClientEventHandler::onRegisterItemColors);
         
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(ModEventHandler::onRegisterCommands);

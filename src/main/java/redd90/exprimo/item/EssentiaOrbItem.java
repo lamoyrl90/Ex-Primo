@@ -67,5 +67,26 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 	public double getPullFactor() {
 		return pullfactor;
 	}
+
+	@Override
+	public int getColor(ItemStack stack) {
+		EssentiaContainer container = (EssentiaContainer) stack.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(null);
+		if (container == null)
+			return -1;
+		long totalcolor = 0;
+		long totalamount = 0;
+		for(Essentia e : ModRegistries.ESSENTIAS) {
+			int v = container.getStack(e);
+			totalcolor += e.getColor() * v;
+			totalamount += v;
+		}
+		
+		if (totalamount == 0)
+			return -1;
+		
+		int ret = (int) Math.floorDiv(totalcolor, totalamount);
+		
+		return ret;
+	}
 	
 }
