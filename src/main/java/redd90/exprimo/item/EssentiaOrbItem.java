@@ -11,10 +11,11 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import redd90.exprimo.client.text.ModText;
+import redd90.exprimo.essentia.Essentia;
 import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
-import redd90.exprimo.essentia.EssentiaStack;
 import redd90.exprimo.registry.ModItems;
+import redd90.exprimo.registry.ModRegistries;
 
 public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 
@@ -47,10 +48,10 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 			EssentiaContainer essentia = (EssentiaContainer) stack.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(null);
 			
 			if (essentia != null) {
-				for(EssentiaStack essentiastack : essentia.getStackSet().values()) {
-					String essentiakey = essentiastack.getEssentia().getTranslationKey();
-					ITextComponent amount = new StringTextComponent(": " + essentiastack.getAmount());
-					IFormattableTextComponent text = ModText.withColor(new TranslationTextComponent(essentiakey), essentiastack.getEssentia().getColor()).append(amount);
+				for(Essentia e : ModRegistries.ESSENTIAS) {
+					String essentiakey = e.getTranslationKey();
+					ITextComponent amount = new StringTextComponent(": " + essentia.getStack(e));
+					IFormattableTextComponent text = ModText.withColor(new TranslationTextComponent(essentiakey), e.getColor()).append(amount);
 					list.add(text);
 				}
 			}

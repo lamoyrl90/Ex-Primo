@@ -6,10 +6,14 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
+import redd90.exprimo.ExPrimo;
+import redd90.exprimo.essentia.Essentia;
 import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
+import redd90.exprimo.registry.ModRegistries;
 
 public class SetChunkEssentiaCommand {
 
@@ -30,7 +34,8 @@ public class SetChunkEssentiaCommand {
 		ServerWorld world = source.getWorld();
 		Chunk chunk = world.getChunkAt(source.getEntity().getPosition());
 		EssentiaContainer container = (EssentiaContainer) chunk.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElseThrow(() -> new IllegalArgumentException("Invalid Essentia Container!"));
-		container.getStack(essentia).setAmount(value);
+		Essentia e = ModRegistries.ESSENTIAS.getValue(new ResourceLocation(ExPrimo.MODID, essentia));
+		container.setStack(e, value);
 		return 1;
 	}
 	

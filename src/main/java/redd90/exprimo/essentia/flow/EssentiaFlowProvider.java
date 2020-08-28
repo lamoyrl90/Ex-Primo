@@ -10,7 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import redd90.exprimo.essentia.Essentia;
 import redd90.exprimo.essentia.EssentiaContainer;
-import redd90.exprimo.essentia.EssentiaStack;
+import redd90.exprimo.registry.ModRegistries;
 
 public abstract class EssentiaFlowProvider {
 
@@ -55,14 +55,11 @@ public abstract class EssentiaFlowProvider {
 		Set<EssentiaFlow> flows = new HashSet<>();
 		
 		for(EssentiaContainer target : targetcontainers) {
-			for(EssentiaStack stack : target.getStackSet().values()) {
-				Essentia essentia = stack.getEssentia();
+			for(Essentia e : ModRegistries.ESSENTIAS) {
 				for(EssentiaContainer source : sourcecontainers) {
-					if (!source.getStackSet().containsKey(essentia.getKey()))
-						continue;
-					int diff = getPressureDiff(source, target, essentia);
+					int diff = getPressureDiff(source, target, e);
 					if (diff > 0) {
-						flows.add(new EssentiaFlow(essentia, source, target, diff));
+						flows.add(new EssentiaFlow(e, source, target, diff));
 					}
 				}
 			}
