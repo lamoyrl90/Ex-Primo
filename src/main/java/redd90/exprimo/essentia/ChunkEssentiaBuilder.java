@@ -12,10 +12,13 @@ import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.OctavesNoiseGenerator;
 import net.minecraft.world.server.ServerWorld;
 import redd90.exprimo.registry.Essentias;
 import redd90.exprimo.registry.ModRegistries;
+import redd90.exprimo.util.ModConstants;
+import redd90.exprimo.util.ModMath;
 
 public class ChunkEssentiaBuilder {
 	
@@ -26,6 +29,7 @@ public class ChunkEssentiaBuilder {
 	private static final Essentia PRIMORDIUM = Essentias.PRIMORDIUM.get();
 
 	private static HashMap<RegistryKey<World>, HashMap<Essentia, OctavesNoiseGenerator>> generators = new HashMap<>();
+	private static HashMap<RegistryKey<World>, OctavesNoiseGenerator> PRIMORDIUM_NOISE = new HashMap<>();
 	
 	private HashMap<Essentia, Double> builtweights = new HashMap<>();
 	private EssentiaContainer container;
@@ -197,6 +201,51 @@ public class ChunkEssentiaBuilder {
 		for (Entry<Essentia, Double> entry : weights.entrySet()) {
 			builtweights.put(entry.getKey(), entry.getValue());
 		}
+		
+		return this;
+	}
+	
+	private ChunkEssentiaBuilder profileChunk() {
+		Mutable pos = new Mutable();
+		pos.setPos(chunk.getPos().getXStart(), world.getSeaLevel(), chunk.getPos().getZStart());
+		List<Float> postemps = new ArrayList<>();
+		List<Float> poshumidities = new ArrayList<>();
+		List<Float> posheights = new ArrayList<>();
+		
+		for (int i=0; i<16; i++) {
+			pos.setX(x + i);
+			for (int j=0; j<16; j++) {
+				pos.setZ(z + j);
+				int y = chunk.getTopBlockY(Heightmap.Type.MOTION_BLOCKING, x+i,z+j);
+				if (y < 0 || y > 255)
+					continue;
+				pos.setY(y);
+				
+				Biome b = world.getBiome(pos);
+				postemps.add(b.getTemperature(pos));
+				poshumidities.add(b.getDownfall());
+				posheights.add((float)y);
+			}
+		}
+		
+		float heightavg = ModMath.getAverage(posheights);
+		float heightvar = ModMath.getVariance(posheights);
+		float humidityavg = ModMath.getAverage(poshumidities);
+		float tempavg = ModMath.getAverage(postemps);
+		double primordiumNoise = PRIMORDIUM_NOISE.get(world.getDimensionKey()).noiseAt(x<<8, z<<8, world.getSeaLevel(), 1.0);
+		
+		double ignisz = (tempavg - ModConstants.TEMPERATURE_AVG) / ModConstants.TEMPERATURE_STD_DEV;
+		double aquaz = (humidityavg - ModConstants.HUMIDITY_AVG) / ModConstants.HUMIDITY_STD_DEV;
+		double terraz = (heightavg - ModConstants.HEIGHT_AVG) / ModConstants.HEIGHT_STD_DEV;
+		double aerz = (ModConstants.HEIGHT_VAR_AVG - heightvar) / ModConstants.HEIGHT_VAR_STD_DEV;
+		double primordiumz = (primordiumNoise - ModConstants.PRIMORDIUM_NOISE_AVG) / ModConstants.PRIMORDIUM_NOISE_STD_DEV;
+		
+		double igniseq = ModMath.getNormalP(ignisz);
+		double aquaeq = ModMath.getNormalP(aquaz);
+		double terraeq = ModMath.getNormalP(terraz);
+		double aereq = ModMath.getNormalP(aerz);
+		double primordiumeq = ModMath.getNormalP(primordiumz);
+		
 		
 		return this;
 	}

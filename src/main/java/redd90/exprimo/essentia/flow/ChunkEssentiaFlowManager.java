@@ -22,7 +22,7 @@ import redd90.exprimo.client.particle.EssentiaFlowParticleData;
 
 public class ChunkEssentiaFlowManager {
 
-	private static final Method LOADED_CHUNKS = ObfuscationReflectionHelper.findMethod(ChunkManager.class, "func_223491_f");
+	public static final Method LOADED_CHUNKS = ObfuscationReflectionHelper.findMethod(ChunkManager.class, "func_223491_f");
 	private static Queue<Chunk> loadedchunkqueue = new LinkedList<>();
 	private static Queue<ChunkEssentiaFlowProvider> tiletickqueue = new LinkedList<>();
 	private static final int MAX_ENQUEUED = 1000;

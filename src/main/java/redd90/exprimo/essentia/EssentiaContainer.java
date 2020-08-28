@@ -23,7 +23,7 @@ import redd90.exprimo.registry.ModRegistries;
 public class EssentiaContainer implements IEssentiaContainer, ICapabilitySerializable<CompoundNBT> {
 
 	private HashMap<String, EssentiaStack> stackset = createEmptyStackSet();
-	private HashMap<Essentia, Double> essentiaweights;
+	private HashMap<Essentia, Double> essentiaweights = initializeWeights();
 	private final Optional<ICapabilityProvider> holder;
 	private int capacity = 1000;
 	private boolean chunkGen = false;
@@ -35,18 +35,15 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 			if (item instanceof IEssentiaContainerItem)
 				this.capacity = ((IEssentiaContainerItem)item).getCapacity();
 		}
-		this.essentiaweights = initializeWeights();
 	}
 	
 	public EssentiaContainer() {
 		this.holder = Optional.empty();
-		this.essentiaweights = initializeWeights();
 	}
 	
 	public EssentiaContainer(ICapabilityProvider holder, HashMap<String, EssentiaStack> stackset) {
 		this.holder = Optional.of(holder);
 		this.setStackSet(stackset);
-		this.essentiaweights = initializeWeights();
 	}
 	
 	private HashMap<Essentia, Double> initializeWeights() {
@@ -190,9 +187,9 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		int value = getStack(essentia).getAmount();
 		if (value == 0)
 			return 0;
-		double divisor = essentiaweights.get(essentia);
+		double divisor = 1 + essentiaweights.get(essentia);
 		divisor = divisor == 0 ? 1 : divisor;
-		int pressure = (int) Math.floor(value / essentiaweights.get(essentia));
+		int pressure = (int) Math.floor(value / divisor);
 		return pressure;
 	}
 	

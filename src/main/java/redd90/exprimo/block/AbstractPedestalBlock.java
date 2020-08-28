@@ -57,9 +57,10 @@ public abstract class AbstractPedestalBlock extends ModBlock {
             		} else {
             			player.addItemStackToInventory(stacktograb);
             		}
+            		world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
             	}
             } else {
-                throw new IllegalStateException("Block missing tile at pos" + pos.toString());
+                throw new IllegalStateException(this.getBlock().getRegistryName().toString() + " missing tile at pos" + pos.toString());
             }
         }
         return ActionResultType.SUCCESS;

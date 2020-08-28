@@ -11,6 +11,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import redd90.exprimo.ExPrimo;
+import redd90.exprimo.command.ProfileChunksCommand;
 import redd90.exprimo.command.SetChunkEssentiaCommand;
 import redd90.exprimo.essentia.ChunkEssentiaBuilder;
 import redd90.exprimo.essentia.EssentiaContainer;
@@ -56,6 +57,7 @@ public class ModEventHandler {
     
 	public static void onRegisterCommands(final RegisterCommandsEvent event) {
 		SetChunkEssentiaCommand.register(event.getDispatcher());
+		ProfileChunksCommand.register(event.getDispatcher());
 	}
 	
 	public static void onChunkLoad(ChunkEvent.Load event) {
