@@ -1,5 +1,6 @@
 package redd90.exprimo.util;
 
+import java.awt.Color;
 import java.util.List;
 
 public class ModMath {
@@ -35,5 +36,33 @@ public class ModMath {
 		double ret = 1 - phi * (b[1] * t + b[2] * Math.pow(t, 2) + b[3] * Math.pow(t, 3) + b[4] * Math.pow(t, 4) + b[5] * Math.pow(t, 5));
 		
 		return ret;
+	}
+	
+	public static int getAverageColor(List<Color> list) {
+		int size = list.size();
+		int[] reds = new int[size];
+		int[] greens = new int[size];
+		int[] blues = new int[size];
+		
+		for(int i=0;i<size;i++) {
+			Color color = list.get(i);
+			reds[i] = color.getRed();
+			greens[i] = color.getGreen();
+			blues[i] = color.getBlue();
+		}
+		
+		int red = (int) getAverage(reds);
+		int green = (int) getAverage(greens);
+		int blue = (int) getAverage(blues);
+		
+		return red << 16 + green << 8 + blue;
+	}
+	
+	public static double getAverage(int[] intarray) {
+		int sum = 0;
+		for(int i=0;i<intarray.length;i++) {
+			sum += intarray[i];
+		}
+		return sum / intarray.length;
 	}
 }

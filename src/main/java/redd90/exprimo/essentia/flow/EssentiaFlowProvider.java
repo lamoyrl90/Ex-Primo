@@ -47,6 +47,7 @@ public abstract class EssentiaFlowProvider {
 				int amount = Math.floorDiv((int) Math.floor(v*factor), count);
 				source.transfer(e, target, amount);
 				colorfactors.add(Pair.of(e, amount));
+				/*
 				if(source.getHolder() instanceof ItemStack && getTile() != null) {
 					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) source.getHolder(), getTile().getPos(), e.getKey(), source.getStack(e) - amount), getTile());
 				}
@@ -54,6 +55,7 @@ public abstract class EssentiaFlowProvider {
 				if(target.getHolder() instanceof ItemStack && getTile() != null) {
 					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) target.getHolder(), getTile().getPos(), e.getKey(), target.getStack(e) + amount), getTile());
 				}
+				*/
 			}
 		}
 		

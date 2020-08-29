@@ -1,5 +1,7 @@
 package redd90.exprimo.item;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -16,6 +18,7 @@ import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.registry.ModItems;
 import redd90.exprimo.registry.ModRegistries;
+import redd90.exprimo.util.ModMath;
 
 public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 
@@ -73,20 +76,13 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 		EssentiaContainer container = (EssentiaContainer) stack.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(null);
 		if (container == null)
 			return -1;
-		long totalcolor = 0;
-		long totalamount = 0;
+		List<Color> colors = new ArrayList<>();
 		for(Essentia e : ModRegistries.ESSENTIAS) {
-			int v = container.getStack(e);
-			totalcolor += e.getColor() * v;
-			totalamount += v;
+			Color color = new Color(e.getColor());
+			colors.add(color);
 		}
 		
-		if (totalamount == 0)
-			return -1;
-		
-		int ret = (int) Math.floorDiv(totalcolor, totalamount);
-		
-		return ret;
+		return ModMath.getAverageColor(colors);
 	}
 	
 }

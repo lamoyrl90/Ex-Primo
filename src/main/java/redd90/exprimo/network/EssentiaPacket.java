@@ -66,7 +66,7 @@ public class EssentiaPacket {
 				return;
 			
 			for(int i=0;i<inv.getSlots();i++) {
-				if(inv.getStackInSlot(i) == stack) {
+				if(inv.getStackInSlot(i).getItem() == stack.getItem()) {
 					container.setStack(e, packet.amount);
 				}
 			}
