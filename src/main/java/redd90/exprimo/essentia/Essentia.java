@@ -6,12 +6,12 @@ public class Essentia extends ForgeRegistryEntry<Essentia> {
 	
 	private final String key;
 	private final String translationkey;
-	private final int color;
+	private final int hue;
 	
-	public Essentia(String key, int color) {
+	public Essentia(String key, int hue) {
 		this.key = key;
 		this.translationkey = "essentia." + key;
-		this.color = color;
+		this.hue = hue;
 	}
 	
 	public String getKey() {
@@ -22,7 +22,7 @@ public class Essentia extends ForgeRegistryEntry<Essentia> {
 		return translationkey;
 	}
 	
-	public int getColor() {
-		return color;
+	public int getHue() {
+		return hue;
 	}
 }

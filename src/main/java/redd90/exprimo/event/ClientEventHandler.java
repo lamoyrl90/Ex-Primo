@@ -42,6 +42,7 @@ public class ClientEventHandler {
 		left.add("enqueued: " + ChunkEssentiaFlowManager.getNumberChunksInQueue());
 		
 	}
+	
 	public static void onRegisterItemColors(ColorHandlerEvent.Item event) {
 		event.getItemColors().register((stack,  color) -> { return color == 0 ? ((IEssentiaContainerItem)stack.getItem()).getColor(stack) : -1; }, (Item[]) (ModItems.getEssentiaColoredItems()));
 	}

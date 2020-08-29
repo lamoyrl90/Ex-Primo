@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.chunk.Chunk;
@@ -19,6 +21,7 @@ public class StackSet implements INBTSerializable<CompoundNBT>{
 		for (Essentia e : ModRegistries.ESSENTIAS) {
 			stacks.put(e, 0);
 		}
+		this.holder = Optional.empty();
 	}
 	
 	public int getAmount(Essentia essentia) {
@@ -63,6 +66,7 @@ public class StackSet implements INBTSerializable<CompoundNBT>{
 		}
 	}
 
+	@Nullable
 	public EssentiaContainer getHolder() {
 		if(holder.isPresent())
 			return holder.get();
@@ -74,9 +78,13 @@ public class StackSet implements INBTSerializable<CompoundNBT>{
 	}
 	
 	private void markDirty() {
-		if(getHolder().getHolder() instanceof Chunk) {
-			Chunk holder = (Chunk) getHolder().getHolder();
-			holder.markDirty();
+		if(!holder.isPresent())
+			return;
+		if(!holder.get().getHolder().isPresent())
+			return;
+		if(holder.get().getHolder().get() instanceof Chunk) {
+			Chunk chunk = (Chunk) holder.get().getHolder().get();
+			chunk.markDirty();
 		}
 	}
 }

@@ -1,21 +1,19 @@
 package redd90.exprimo.essentia.flow;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import redd90.exprimo.essentia.Essentia;
 import redd90.exprimo.essentia.EssentiaContainer;
+import redd90.exprimo.essentia.StackSet;
 import redd90.exprimo.network.EssentiaPacket;
 import redd90.exprimo.network.PacketHandler;
 import redd90.exprimo.registry.ModRegistries;
+import redd90.exprimo.util.ColorUtil;
 
 public abstract class EssentiaFlowProvider {
 
@@ -33,10 +31,9 @@ public abstract class EssentiaFlowProvider {
 	
 	protected abstract Set<EssentiaContainer> gatherTargetContainers();
 	
-	public int flow(double factor) {
+	public float[] flow(double factor) {
 		Set<EssentiaFlow> flows = calculateFlows();
-		List<Pair<Essentia, Integer>> colorfactors = new ArrayList<>();
-		float flowcolor = 0;
+		StackSet virtualstackset = new StackSet();
 		int count = flows.size();
 		for(EssentiaFlow flow : flows) {
 			int v = flow.getValue();
@@ -46,29 +43,26 @@ public abstract class EssentiaFlowProvider {
 			if(v > 0) {
 				int amount = Math.floorDiv((int) Math.floor(v*factor), count);
 				source.transfer(e, target, amount);
-				colorfactors.add(Pair.of(e, amount));
-				/*
-				if(source.getHolder() instanceof ItemStack && getTile() != null) {
-					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) source.getHolder(), getTile().getPos(), e.getKey(), source.getStack(e) - amount), getTile());
+				int u = virtualstackset.getAmount(e);
+				virtualstackset.setAmount(e, u + amount);
+				
+				if(source.getHolder().get() instanceof ItemStack && getTile() != null) {
+					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) source.getHolder().get(), getTile().getPos(), e.getKey(), source.getStack(e) - amount), getTile());
 				}
 				
-				if(target.getHolder() instanceof ItemStack && getTile() != null) {
-					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) target.getHolder(), getTile().getPos(), e.getKey(), target.getStack(e) + amount), getTile());
+				if(target.getHolder().get() instanceof ItemStack && getTile() != null) {
+					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) target.getHolder().get(), getTile().getPos(), e.getKey(), target.getStack(e) + amount), getTile());
 				}
-				*/
+				
 			}
 		}
 		
-		int total = 0;
-		for(Pair<Essentia,Integer> entry : colorfactors) {
-			flowcolor += entry.getLeft().getColor() * entry.getRight();
-			total += entry.getRight();
-		}
 		
-		if (total == 0)
-			total = 1;
 		
-		return (int) (flowcolor / total);
+		float[] flowcolor = ColorUtil.stacksetAverageColor(virtualstackset).getRGBColorComponents(null);
+		
+		return flowcolor;
+		
 	}
 	
 	protected Set<EssentiaFlow> calculateFlows() {

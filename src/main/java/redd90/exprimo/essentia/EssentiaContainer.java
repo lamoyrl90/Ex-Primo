@@ -1,6 +1,7 @@
 package redd90.exprimo.essentia;
 
 import java.util.Optional;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -77,12 +78,8 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		stackset.deserializeNBT(nbt.getCompound("stackset"));
 	}
 
-	public ICapabilityProvider getHolder() {
-		if (holder.isPresent()) {
-			return holder.get();
-		} else {
-			return null;
-		}
+	public Optional<ICapabilityProvider> getHolder() {
+		return holder;
 	}
 	
 	public void setStackSet(StackSet stacksetIn) {
@@ -91,7 +88,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	
 	public EssentiaContainer copyEssentiaAndCapacity() {
 		StackSet stackset = new StackSet();
-		EssentiaContainer copy = new EssentiaContainer(this.getHolder(), stackset);
+		EssentiaContainer copy = new EssentiaContainer(this.getHolder().get(), stackset);
 		copy.setStackSet(this.stackset);
 		copy.setEquilibrium(this.equilibrium);
 		return copy;

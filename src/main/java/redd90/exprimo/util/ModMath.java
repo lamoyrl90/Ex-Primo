@@ -1,7 +1,8 @@
 package redd90.exprimo.util;
 
-import java.awt.Color;
 import java.util.List;
+
+import net.minecraft.item.DyeColor;
 
 public class ModMath {
 	public static float getVariance(List<Float> list) {
@@ -38,34 +39,78 @@ public class ModMath {
 		return ret;
 	}
 	
-	public static int getAverageColor(List<Color> colors, List<Integer> weightsIn) {
+	public static int getAverageColor(List<DyeColor> colors, List<Integer> weightsIn) {
 		int size = colors.size();
-		int[] reds = new int[size];
-		int[] greens = new int[size];
-		int[] blues = new int[size];
-		int[] weights = weightsIn.stream().mapToInt(i->i).toArray();
+		float[] reds = new float[size];
+		float[] greens = new float[size];
+		float[] blues = new float[size];
+		int[] weights = new int[size];
 		
 		for(int i=0;i<size;i++) {
-			Color color = colors.get(i);
-			reds[i] = color.getRed();
-			greens[i] = color.getGreen();
-			blues[i] = color.getBlue();
+			float[] comps = colors.get(i).getColorComponentValues();
+			reds[i] = comps[0];
+			greens[i] = comps[1];
+			blues[i] = comps[2];
+			weights[i] = weightsIn.get(i);
 		}
 		
-		int red = (int) getWeightedAverage(reds, weights);
-		int green = (int) getWeightedAverage(greens, weights);
-		int blue = (int) getWeightedAverage(blues, weights);
+		int red = (int) (getWeightedAverage(reds, weights) * 255);
+		int green = (int) (getWeightedAverage(greens, weights) * 255);
+		int blue = (int) (getWeightedAverage(blues, weights) * 255);
 		
-		return red << 16 + green << 8 + blue;
+		int ret = (red << 16) + (green << 8) + (blue);
+		
+		return ret;
 	}
 	
-	public static double getWeightedAverage(int[] values, int[] weights) {
-		int sum = 0;
+	public static float[] getAverageColorRGB(List<DyeColor> colors, List<Integer> weightsIn) {
+		int size = colors.size();
+		float[] reds = new float[size];
+		float[] greens = new float[size];
+		float[] blues = new float[size];
+		int[] weights = new int[size];
+		
+		for(int i=0;i<size;i++) {
+			float[] comps = colors.get(i).getColorComponentValues();
+			reds[i] = comps[0];
+			greens[i] = comps[1];
+			blues[i] = comps[2];
+			weights[i] = weightsIn.get(i);
+		}
+		
+		float red = getWeightedAverage(reds, weights);
+		float green = getWeightedAverage(greens, weights);
+		float blue = getWeightedAverage(blues, weights);
+		
+		float[] ret = {red, green, blue};
+		
+		return ret;
+	}
+	
+	public static float getWeightedAverage(float[] values, int[] weights) {
+		float sum = 0;
 		int totalweight = 0;
 		for(int i=0;i<values.length;i++) {
 			sum += values[i] * weights[i];
 			totalweight += weights[i];
 		}
-		return sum / (values.length * totalweight);
+		return (sum / (totalweight));
 	}
+	
+	public static double sum(double[] nums) {
+		double sum = 0;
+		for(double num : nums) {
+			sum += num;
+		}
+		return sum;
+	}
+	
+	public static int sum(int[] nums) {
+		int sum = 0;
+		for(int i=0;i<nums.length;i++) {
+			sum += nums[i];
+		}
+		return sum;
+	}
+	
 }

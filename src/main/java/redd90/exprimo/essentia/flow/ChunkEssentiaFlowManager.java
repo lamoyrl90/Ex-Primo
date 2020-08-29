@@ -1,6 +1,5 @@
 package redd90.exprimo.essentia.flow;
 
-import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -44,10 +43,10 @@ public class ChunkEssentiaFlowManager {
 		
 		while(!tiletickqueue.isEmpty()) {
 			ChunkEssentiaFlowProvider tileflow = tiletickqueue.poll();
-			Color color = new Color(tileflow.flow(tileflow.getFactor()));
-			double b = (double) color.getBlue() / 255;
-			double g = (double) color.getGreen() / 255;
-			double r = (double) color.getRed() / 255;
+			float[] color = tileflow.flow(tileflow.getFactor());
+			float r = color[0];
+			float g = color[1];
+			float b = color[2];
 			TileEntity tile = tileflow.getTile();
 			if (r == 0 && g == 0 && b == 0) {
 				continue;

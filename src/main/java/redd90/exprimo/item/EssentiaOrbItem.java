@@ -1,7 +1,5 @@
 package redd90.exprimo.item;
 
-import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -18,7 +16,7 @@ import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.registry.ModItems;
 import redd90.exprimo.registry.ModRegistries;
-import redd90.exprimo.util.ModMath;
+import redd90.exprimo.util.ColorUtil;
 
 public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 
@@ -54,7 +52,7 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 				for(Essentia e : ModRegistries.ESSENTIAS) {
 					String essentiakey = e.getTranslationKey();
 					ITextComponent amount = new StringTextComponent(": " + essentia.getStack(e));
-					IFormattableTextComponent text = ModText.withColor(new TranslationTextComponent(essentiakey), e.getColor()).append(amount);
+					IFormattableTextComponent text = ModText.withColor(new TranslationTextComponent(essentiakey), ColorUtil.hueToRGB(e.getHue())).append(amount);
 					list.add(text);
 				}
 			}
@@ -76,15 +74,7 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 		EssentiaContainer container = (EssentiaContainer) stack.getCapability(EssentiaContainerCap.ESSENTIA_CONTAINER).orElse(null);
 		if (container == null)
 			return -1;
-		List<Color> colors = new ArrayList<>();
-		List<Integer> weights = new ArrayList<>();
-		for(Essentia e : ModRegistries.ESSENTIAS) {
-			Color color = new Color(e.getColor());
-			colors.add(color);
-			weights.add(container.getStack(e));
-		}
-		
-		return ModMath.getAverageColor(colors, weights);
+		return ColorUtil.stacksetTimeColor(container.getStackSet()).getRGB();
 	}
 	
 }

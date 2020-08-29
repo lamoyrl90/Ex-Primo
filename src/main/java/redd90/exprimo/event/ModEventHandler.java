@@ -17,6 +17,7 @@ import redd90.exprimo.essentia.ChunkEssentiaBuilder;
 import redd90.exprimo.essentia.EssentiaContainer;
 import redd90.exprimo.essentia.EssentiaContainerCap;
 import redd90.exprimo.essentia.flow.ChunkEssentiaFlowManager;
+import redd90.exprimo.util.ColorUtil;
 
 public class ModEventHandler {
 	
@@ -49,7 +50,7 @@ public class ModEventHandler {
 		if (event.world.isRemote())
 			return;
 		ServerWorld world = (ServerWorld) event.world;
-		
+		ColorUtil.updateRenderTime(world);
         world.getProfiler().startSection(ExPrimo.MODID + ":onWorldTick");
         ChunkEssentiaFlowManager.onServerWorldTick(world);
         event.world.getProfiler().endSection();
