@@ -94,7 +94,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		return copy;
 	}
 
-	public int getInnerPressure(Essentia essentia) {
+	public double getInnerPressure(Essentia essentia) {
 		int eq = equilibrium.getValue(essentia);
 		int value = getStack(essentia);
 		int total = 0;
@@ -103,7 +103,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 		}
 		if (eq == 0)
 			eq = 1;
-		return (int) Math.floorDiv(value * total,eq);
+		return (value) * (total/eq);
 	}
 	
 	

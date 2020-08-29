@@ -47,11 +47,11 @@ public class ChunkEssentiaFlowManager {
 			float r = color[0];
 			float g = color[1];
 			float b = color[2];
-			TileEntity tile = tileflow.getTile();
 			if (r == 0 && g == 0 && b == 0) {
 				continue;
 			}
-			if (tile != null) {
+			if (tileflow.getTile().isPresent()) {
+				TileEntity tile = tileflow.getTile().get();
 				BlockPos pos = tile.getPos();
 				Random rand = world.getRandom();
 				

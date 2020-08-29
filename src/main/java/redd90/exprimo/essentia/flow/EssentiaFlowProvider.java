@@ -36,22 +36,22 @@ public abstract class EssentiaFlowProvider {
 		StackSet virtualstackset = new StackSet();
 		int count = flows.size();
 		for(EssentiaFlow flow : flows) {
-			int v = flow.getValue();
+			double v = flow.getValue();
 			EssentiaContainer source = flow.getSource();
 			EssentiaContainer target = flow.getTarget();
 			Essentia e = flow.getEssentia();
 			if(v > 0) {
-				int amount = Math.floorDiv((int) Math.floor(v*factor), count);
+				int amount = (int) (v*factor / count);
 				source.transfer(e, target, amount);
 				int u = virtualstackset.getAmount(e);
 				virtualstackset.setAmount(e, u + amount);
 				
-				if(source.getHolder().get() instanceof ItemStack && getTile() != null) {
-					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) source.getHolder().get(), getTile().getPos(), e.getKey(), source.getStack(e) - amount), getTile());
+				if(source.getHolder().get() instanceof ItemStack && te.isPresent()) {
+					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) source.getHolder().get(), te.get().getPos(), e.getKey(), source.getStack(e) - amount), te.get());
 				}
 				
-				if(target.getHolder().get() instanceof ItemStack && getTile() != null) {
-					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) target.getHolder().get(), getTile().getPos(), e.getKey(), target.getStack(e) + amount), getTile());
+				if(target.getHolder().get() instanceof ItemStack && te.isPresent()) {
+					PacketHandler.sendToAllTracking(new EssentiaPacket((ItemStack) target.getHolder().get(), te.get().getPos(), e.getKey(), target.getStack(e) + amount), te.get());
 				}
 				
 			}
@@ -71,7 +71,7 @@ public abstract class EssentiaFlowProvider {
 		for(EssentiaContainer target : targetcontainers) {
 			for(Essentia e : ModRegistries.ESSENTIAS) {
 				for(EssentiaContainer source : sourcecontainers) {
-					int diff = getPressureDiff(source, target, e);
+					double diff = getPressureDiff(source, target, e);
 					if (diff > 0) {
 						flows.add(new EssentiaFlow(e, source, target, diff));
 					}
@@ -82,14 +82,12 @@ public abstract class EssentiaFlowProvider {
 		return flows;
 	}
 	
-	protected int getPressureDiff(EssentiaContainer source, EssentiaContainer target, Essentia essentia) {
+	protected double getPressureDiff(EssentiaContainer source, EssentiaContainer target, Essentia essentia) {
 		return (source.getInnerPressure(essentia) - target.getInnerPressure(essentia));
 	}
 	
 
-	public TileEntity getTile() {
-		if (te.isPresent())
-			return te.get();
-		return null;
+	public Optional<TileEntity> getTile() {
+		return te;
 	}
 }

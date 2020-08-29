@@ -9,13 +9,13 @@ class EssentiaFlow {
 	private final EssentiaContainer source;
 	private final EssentiaContainer target;
 	private final Essentia essentia;
-	private final int value;
+	private final double value;
 	
-	protected EssentiaFlow(Essentia essentia, EssentiaContainer source, EssentiaContainer target, int value) {
+	protected EssentiaFlow(Essentia essentia, EssentiaContainer source, EssentiaContainer target, double value) {
 		this.essentia = essentia;
 		this.source = source;
 		this.target = target;
-		this.value = (int) Math.floor(value * GLOBAL_FLOW_RATE);
+		this.value = value * GLOBAL_FLOW_RATE;
 	}
 
 	public Essentia getEssentia() {
@@ -30,7 +30,7 @@ class EssentiaFlow {
 		return target;
 	}
 
-	public int getValue() {
+	public double getValue() {
 		return value;
 	}
 }

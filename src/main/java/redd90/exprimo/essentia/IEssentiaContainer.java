@@ -6,7 +6,7 @@ public interface IEssentiaContainer {
 	
 	StackSet getStackSet();
 	
-	int getInnerPressure(Essentia essentia);
+	double getInnerPressure(Essentia essentia);
 
 
 }
