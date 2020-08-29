@@ -45,7 +45,7 @@ public class EssentiaContainer implements IEssentiaContainer, ICapabilitySeriali
 	}
 	
 	public void setStack(Essentia essentia, int amount) {
-		stackset.setAmount(essentia, amount);;
+		stackset.setAmount(essentia, amount);
 	}
 	
 	public StackSet getStackSet() {

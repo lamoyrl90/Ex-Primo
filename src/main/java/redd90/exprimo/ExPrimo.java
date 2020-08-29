@@ -13,6 +13,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import redd90.exprimo.event.ClientEventHandler;
 import redd90.exprimo.event.ModEventHandler;
+import redd90.exprimo.network.PacketHandler;
 import redd90.exprimo.registry.Essentias;
 import redd90.exprimo.registry.ModBlocks;
 import redd90.exprimo.registry.ModItems;
@@ -50,6 +51,7 @@ public class ExPrimo
     }
     
     public void commonSetup(final FMLCommonSetupEvent event) {
+    	PacketHandler.init();
     	MinecraftForge.EVENT_BUS.addGenericListener(Chunk.class, ModEventHandler::onAttachChunkCaps);
     	MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModEventHandler::onAttachEntityCaps);
     	MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, ModEventHandler::onAttachItemCaps);

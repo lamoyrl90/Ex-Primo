@@ -16,7 +16,6 @@ import redd90.exprimo.essentia.EssentiaContainerCap;
 
 public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 	
-	private final Optional<TileEntity> te;
 	private double factor = 1;
 		
 	public ChunkEssentiaFlowProvider(Chunk chunk) {
@@ -70,12 +69,6 @@ public class ChunkEssentiaFlowProvider extends EssentiaFlowProvider {
 
 	public double getFactor() {
 		return factor;
-	}
-
-	public TileEntity getTile() {
-		if (te.isPresent())
-			return te.get();
-		return null;
 	}
 
 }

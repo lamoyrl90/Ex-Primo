@@ -1,6 +1,7 @@
 package redd90.exprimo.essentia.flow;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,7 @@ public class TileEssentiaFlowProvider extends EssentiaFlowProvider {
 		super(holder);
 		this.sourcecontainers = gatherSourceContainers();
 		this.targetcontainers = gatherTargetContainers();
+		this.te = Optional.of(holder);
 	}
 
 	@Override
