@@ -77,12 +77,14 @@ public class EssentiaOrbItem extends Item implements IEssentiaContainerItem {
 		if (container == null)
 			return -1;
 		List<Color> colors = new ArrayList<>();
+		List<Integer> weights = new ArrayList<>();
 		for(Essentia e : ModRegistries.ESSENTIAS) {
 			Color color = new Color(e.getColor());
 			colors.add(color);
+			weights.add(container.getStack(e));
 		}
 		
-		return ModMath.getAverageColor(colors);
+		return ModMath.getAverageColor(colors, weights);
 	}
 	
 }

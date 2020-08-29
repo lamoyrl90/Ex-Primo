@@ -38,31 +38,34 @@ public class ModMath {
 		return ret;
 	}
 	
-	public static int getAverageColor(List<Color> list) {
-		int size = list.size();
+	public static int getAverageColor(List<Color> colors, List<Integer> weightsIn) {
+		int size = colors.size();
 		int[] reds = new int[size];
 		int[] greens = new int[size];
 		int[] blues = new int[size];
+		int[] weights = weightsIn.stream().mapToInt(i->i).toArray();
 		
 		for(int i=0;i<size;i++) {
-			Color color = list.get(i);
+			Color color = colors.get(i);
 			reds[i] = color.getRed();
 			greens[i] = color.getGreen();
 			blues[i] = color.getBlue();
 		}
 		
-		int red = (int) getAverage(reds);
-		int green = (int) getAverage(greens);
-		int blue = (int) getAverage(blues);
+		int red = (int) getWeightedAverage(reds, weights);
+		int green = (int) getWeightedAverage(greens, weights);
+		int blue = (int) getWeightedAverage(blues, weights);
 		
 		return red << 16 + green << 8 + blue;
 	}
 	
-	public static double getAverage(int[] intarray) {
+	public static double getWeightedAverage(int[] values, int[] weights) {
 		int sum = 0;
-		for(int i=0;i<intarray.length;i++) {
-			sum += intarray[i];
+		int totalweight = 0;
+		for(int i=0;i<values.length;i++) {
+			sum += values[i] * weights[i];
+			totalweight += weights[i];
 		}
-		return sum / intarray.length;
+		return sum / (values.length * totalweight);
 	}
 }
